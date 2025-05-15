@@ -1,0 +1,63 @@
+<!-- login.html -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>用户登录 - 文物展厅系统</title>
+  <style>
+    .container {
+      max-width: 400px;
+      margin: 50px auto;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+    .form-group { margin-bottom: 15px; }
+    input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2>用户登录</h2>
+  <form id="loginForm">
+    <div class="form-group">
+      <input type="text" id="username" placeholder="用户名" required>
+    </div>
+    <div class="form-group">
+      <input type="password" id="password" placeholder="密码" required>
+    </div>
+    <button type="submit">登录</button>
+    <a href="register.html">注册新账号</a>
+  </form>
+</div>
+
+<script>
+  document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    // 调用后端API示例
+    fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    }).then(response => {
+      if (response.ok) window.location.href = '/dashboard';
+    });
+  });
+</script>
+</body>
+</html>
