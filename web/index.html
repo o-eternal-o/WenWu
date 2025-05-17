@@ -30,15 +30,35 @@
       box-shadow: 0 2px 10px rgba(0,0,0,0.3);
     }
 
+    /* 导航容器-三列布局 */
     .nav-container {
-      width: 100%;
       display: flex;
+      align-items: center;
       justify-content: space-between;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* 左侧区域（Logo+菜单） */
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-shrink: 0;
+    }
+
+    /* 右侧登录区域 */
+    .nav-right {
+      flex-shrink: 0;
+      display: flex;
       align-items: center;
     }
 
+    /* 优化后的Logo尺寸 */
     .nav-logo {
-      width: 180px;
+      width: 80px; /* 调整后的合适尺寸 */
+      height: auto;
+      object-fit: contain;
     }
 
     /* 汉堡菜单按钮 */
@@ -49,20 +69,19 @@
       font-size: 24px;
       cursor: pointer;
       display: none;
-      margin-left: 20px;
     }
 
     /* 导航链接 */
     .nav-links {
       display: flex;
-      gap: 35px;
+      gap: 25px;
       align-items: center;
     }
 
     .nav-link {
       color: white;
       text-decoration: none;
-      font-size: 18px;
+      font-size: 16px;
       position: relative;
       padding: 5px 0;
     }
@@ -82,9 +101,19 @@
       width: 100%;
     }
 
+    /* 中间搜索区域 */
+    .nav-center {
+      flex: 1;  /* 关键属性-占据剩余空间 */
+      max-width: 600px;
+      margin: 0 20px;
+      position: relative;
+    }
+
     /* 搜索功能 */
     .search-wrapper {
-      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .search-toggle {
@@ -93,41 +122,40 @@
       color: var(--gold);
       font-size: 20px;
       cursor: pointer;
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 1;
     }
 
     .search-box {
-      position: absolute;
-      top: 50px;
-      right: 0;
-      width: 300px;
-      background: rgba(255,255,255,0.95);
-      border-radius: 8px;
-      padding: 15px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      opacity: 0;
-      visibility: hidden;
-      transform: translateY(-10px);
-      transition: all 0.3s ease;
-      z-index: 1000;
-    }
-
-    .search-box.active {
+      width: 100%;
+      position: static; /* 修改定位方式 */
       opacity: 1;
       visibility: visible;
-      transform: translateY(0);
+      background: transparent;
+      box-shadow: none;
+      padding: 0;
     }
 
     .search-input {
       width: 100%;
-      padding: 10px;
+      padding: 10px 10px 10px 40px;
       border: 2px solid var(--gold);
-      border-radius: 4px;
+      border-radius: 25px;
+      background: rgba(255,255,255,0.2);
+      color: white;
     }
 
     /* 响应式设计 */
     @media (max-width: 768px) {
       .menu-toggle {
         display: block;
+      }
+
+      .nav-logo {
+        width: 80px; /* 移动端尺寸 */
       }
 
       .nav-links {
@@ -151,10 +179,15 @@
         padding: 12px 20px;
       }
 
-      .search-box {
-        width: 90%;
-        left: 5%;
-        right: auto;
+      .nav-center {
+        display: none; /* 移动端隐藏搜索框 */
+      }
+
+      /* 显示移动端搜索按钮 */
+      .nav-right .search-toggle {
+        display: block;
+        position: static;
+        transform: none;
       }
     }
 
@@ -242,11 +275,12 @@
   </style>
 </head>
 <body>
-<!-- 导航栏 -->
+<!-- 修改后的导航栏结构 -->
 <nav class="palace-nav">
   <div class="nav-container">
+    <!-- 左侧：Logo和菜单 -->
     <div class="nav-left">
-      <img src="palace-logo.png" alt="数字文物展厅" class="nav-logo">
+      <img src="assets/img/微信图片_20250517195745.jpg" alt="数字文物展厅" class="nav-logo">
       <button class="menu-toggle" onclick="toggleMenu()">
         <i class="fas fa-bars"></i>
       </button>
@@ -259,7 +293,8 @@
       </div>
     </div>
 
-    <div class="nav-right">
+    <!-- 中间：搜索框 -->
+    <div class="nav-center">
       <div class="search-wrapper">
         <button class="search-toggle" onclick="toggleSearch()">
           <i class="fas fa-search"></i>
@@ -268,6 +303,10 @@
           <input type="text" class="search-input" placeholder="输入文物名称或朝代...">
         </div>
       </div>
+    </div>
+
+    <!-- 右侧：登录 -->
+    <div class="nav-right">
       <a href="login.html" class="nav-link">登录</a>
     </div>
   </div>
