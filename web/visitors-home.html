@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>数字文物展厅系统 - 游客中心</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-red: #9b1b1f;
+      --gold: #c8a86a;
+      --dark-bg: #2a2a2a;
+      --light-bg: #f8f8f8;
+      --border-color: #e0e0e0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Microsoft YaHei', '宋体', sans-serif;
+    }
+
+    body {
+      background-color: var(--light-bg);
+      color: #333;
+      line-height: 1.6;
+    }
+
+    /* 故宫风格导航栏 */
+    .palace-nav {
+      background: var(--primary-red);
+      height: 80px;
+      display: flex;
+      align-items: center;
+      padding: 0 5%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+
+    /* 导航容器-三列布局 */
+    .nav-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* 左侧区域（Logo+菜单） */
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-shrink: 0;
+    }
+
+    /* 右侧用户区域 */
+    .nav-right {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    /* 优化后的Logo尺寸 */
+    .nav-logo {
+      width: 80px;
+      height: auto;
+      object-fit: contain;
+    }
+
+    /* 汉堡菜单按钮 */
+    .menu-toggle {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      display: none;
+    }
+
+    /* 导航链接 */
+    .nav-links {
+      display: flex;
+      gap: 25px;
+      align-items: center;
+    }
+
+    .nav-link {
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+      position: relative;
+      padding: 5px 0;
+      transition: color 0.3s;
+    }
+
+    .nav-link:hover {
+      color: var(--gold);
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--gold);
+      transition: width 0.3s;
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    /* 用户信息区域 */
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .user-name {
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .user-dropdown {
+      position: absolute;
+      top: 50px;
+      right: 0;
+      background: white;
+      border-radius: 5px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      width: 150px;
+      display: none;
+      z-index: 1000;
+      border: 1px solid var(--border-color);
+    }
+
+    .user-dropdown.active {
+      display: block;
+    }
+
+    .user-dropdown a {
+      display: block;
+      padding: 12px 15px;
+      color: var(--dark-bg);
+      text-decoration: none;
+      transition: background 0.3s;
+      font-size: 14px;
+    }
+
+    .user-dropdown a:hover {
+      background: #f5f5f5;
+      color: var(--primary-red);
+    }
+
+    .user-dropdown a i {
+      margin-right: 8px;
+      color: var(--primary-red);
+      width: 18px;
+      text-align: center;
+    }
+
+    /* 游客中心内容样式 */
+    .container {
+      max-width: 1200px;
+      margin: 100px auto 40px;
+      padding: 0 20px;
+    }
+
+    .profile-header {
+      background-color: #fff;
+      border-radius: 8px;
+      padding: 30px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      margin-bottom: 20px;
+      display: flex;
+      border: 1px solid var(--gold);
+      position: relative;
+    }
+
+    .avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 30px;
+      border: 3px solid var(--gold);
+      background-color: #e8f4fc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      color: var(--primary-red);
+      flex-shrink: 0;
+    }
+
+    .user-info {
+      flex: 1;
+    }
+
+    .username {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: var(--primary-red);
+    }
+
+    .user-role {
+      display: inline-block;
+      background-color: var(--gold);
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      margin-bottom: 10px;
+      font-weight: 500;
+    }
+
+    .user-info p {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .user-stats {
+      display: flex;
+      margin-top: 15px;
+    }
+
+    .stat-item {
+      margin-right: 30px;
+      text-align: center;
+      min-width: 80px;
+    }
+
+    .stat-value {
+      font-size: 20px;
+      font-weight: bold;
+      color: var(--primary-red);
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: #666;
+    }
+
+    .profile-nav {
+      display: flex;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      margin-bottom: 20px;
+      overflow: hidden;
+      border: 1px solid var(--gold);
+    }
+
+    .nav-item {
+      padding: 15px 25px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      border-bottom: 3px solid transparent;
+      flex: 1;
+      color: var(--primary-red);
+      font-weight: 500;
+      font-size: 15px;
+    }
+
+    .nav-item:hover, .nav-item.active {
+      color: var(--primary-red);
+      border-bottom-color: var(--gold);
+      background-color: rgba(200, 168, 106, 0.1);
+    }
+
+    .content-section {
+      background-color: #fff;
+      border-radius: 8px;
+      padding: 30px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      display: none;
+      border: 1px solid var(--gold);
+      margin-bottom: 20px;
+    }
+
+    .content-section.active {
+      display: block;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--gold);
+      color: var(--primary-red);
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .info-label {
+      font-weight: 500;
+      color: var(--primary-red);
+      font-size: 14px;
+      align-self: center;
+    }
+
+    .info-value {
+      font-size: 14px;
+      color: #333;
+    }
+
+    .booking-list {
+      margin-top: 20px;
+    }
+
+    .booking-item {
+      display: flex;
+      padding: 15px;
+      border: 1px solid var(--gold);
+      border-radius: 6px;
+      margin-bottom: 10px;
+      transition: all 0.3s;
+      align-items: center;
+    }
+
+    .booking-item:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .booking-hall {
+      width: 200px;
+      font-weight: 500;
+      color: var(--primary-red);
+      font-size: 15px;
+    }
+
+    .booking-time {
+      flex: 1;
+      font-size: 14px;
+      color: #555;
+    }
+
+    .booking-status {
+      width: 80px;
+      text-align: center;
+      border-radius: 4px;
+      padding: 5px 8px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .status-pending {
+      background-color: #fff7e6;
+      color: #fa8c16;
+    }
+
+    .status-confirmed {
+      background-color: #f6ffed;
+      color: #52c41a;
+    }
+
+    .status-canceled {
+      background-color: #fff1f0;
+      color: #f5222d;
+    }
+
+    .empty-tip {
+      text-align: center;
+      padding: 40px 0;
+      color: #999;
+    }
+
+    .empty-tip p {
+      margin-bottom: 15px;
+      font-size: 15px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 8px 16px;
+      background-color: var(--primary-red);
+      color: white;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: all 0.3s;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .btn:hover {
+      background-color: #c12a2e;
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      border: 1px solid var(--primary-red);
+      color: var(--primary-red);
+    }
+
+    .btn-outline:hover {
+      background-color: rgba(155, 27, 31, 0.1);
+    }
+
+    .settings-form {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--primary-red);
+      font-size: 14px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--gold);
+      border-radius: 4px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--primary-red);
+      box-shadow: 0 0 0 2px rgba(155, 27, 31, 0.1);
+    }
+
+    .form-actions {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .auth-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      margin-left: 10px;
+      font-weight: 500;
+    }
+
+    .auth-yes {
+      background-color: #52c41a;
+      color: white;
+    }
+
+    .auth-no {
+      background-color: #f5222d;
+      color: white;
+      cursor: pointer;
+      transition: opacity 0.3s;
+    }
+
+    .auth-no:hover {
+      opacity: 0.8;
+    }
+
+    .feedback-item {
+      padding: 15px;
+      border: 1px solid var(--gold);
+      border-radius: 6px;
+      margin-bottom: 15px;
+      background-color: #fff;
+    }
+
+    .feedback-item strong {
+      font-size: 15px;
+      color: var(--primary-red);
+    }
+
+    .feedback-item p {
+      font-size: 14px;
+      color: #333;
+      margin: 10px 0;
+    }
+
+    .feedback-time {
+      font-size: 12px;
+      color: #999;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+      .menu-toggle {
+        display: block;
+      }
+
+      .nav-logo {
+        width: 70px;
+      }
+
+      .nav-links {
+        position: fixed;
+        top: 80px;
+        left: 0;
+        right: 0;
+        background: var(--primary-red);
+        flex-direction: column;
+        padding: 20px;
+        display: none;
+        gap: 15px;
+        z-index: 999;
+      }
+
+      .nav-links.active {
+        display: flex;
+      }
+
+      .nav-link {
+        padding: 12px 20px;
+      }
+
+      .user-name {
+        display: none;
+      }
+
+      .profile-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 20px;
+      }
+
+      .avatar {
+        margin-right: 0;
+        margin-bottom: 15px;
+        width: 80px;
+        height: 80px;
+        font-size: 32px;
+      }
+
+      .user-stats {
+        justify-content: center;
+      }
+
+      .stat-item {
+        margin: 0 15px;
+      }
+
+      .profile-nav {
+        flex-wrap: wrap;
+      }
+
+      .nav-item {
+        flex: 1 0 50%;
+        padding: 12px;
+        font-size: 14px;
+      }
+
+      .content-section {
+        padding: 20px;
+      }
+
+      .booking-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .booking-hall, .booking-time, .booking-status {
+        width: 100%;
+        margin-bottom: 8px;
+      }
+
+      .booking-status {
+        align-self: flex-start;
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+        gap: 5px;
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- 故宫风格导航栏 -->
+<nav class="palace-nav">
+  <div class="nav-container">
+    <!-- 左侧：Logo和菜单 -->
+    <div class="nav-left">
+      <img src="assets/img/微信图片_20250517195745.jpg" alt="数字文物展厅" class="nav-logo">
+      <button class="menu-toggle" onclick="toggleMenu()">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="nav-links">
+        <a href="visitors-index.html" class="nav-link">首页</a>
+        <a href="#" class="nav-link">参观导览</a>
+        <a href="#" class="nav-link">数字文物</a>
+        <a href="#" class="nav-link">特展在线</a>
+        <a href="relic-detail.html" class="nav-link">展厅预约</a>
+      </div>
+    </div>
+
+    <!-- 右侧：用户信息 -->
+    <div class="nav-right">
+      <div class="user-profile" onclick="toggleUserDropdown()">
+        <span class="user-name">游客用户</span>
+        <div class="user-dropdown">
+          <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> 退出登录</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <!-- 用户信息头部 (固定显示) -->
+  <div class="profile-header">
+    <div class="avatar">游</div>
+    <div class="user-info">
+      <h1 class="username">游客用户</h1>
+      <span class="user-role">游客</span>
+      <p>注册时间: 2023-10-15 | 上次登录: 2023-11-15 09:20</p>
+
+      <div class="user-stats">
+        <div class="stat-item">
+          <div class="stat-value">3</div>
+          <div class="stat-label">预约记录</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">1</div>
+          <div class="stat-label">反馈记录</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 导航菜单 -->
+  <div class="profile-nav">
+    <div class="nav-item active" data-section="booking">我的预约</div>
+    <div class="nav-item" data-section="feedback">我的反馈</div>
+    <div class="nav-item" data-section="settings">个人信息</div>
+  </div>
+
+  <!-- 我的预约内容区 -->
+  <div id="booking-section" class="content-section active">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h2 class="section-title">我的预约</h2>
+      <a href="#" class="btn">新建预约</a>
+    </div>
+
+    <div class="booking-list">
+      <div class="booking-item">
+        <div class="booking-hall">唐代文物展厅</div>
+        <div class="booking-time">2023-11-18 14:00 - 16:00</div>
+        <div class="booking-status status-confirmed">已确认</div>
+      </div>
+
+      <div class="booking-item">
+        <div class="booking-hall">青铜器专题展</div>
+        <div class="booking-time">2023-11-25 10:00 - 12:00</div>
+        <div class="booking-status status-pending">待确认</div>
+      </div>
+
+      <div class="empty-tip" style="display: none;">
+        <p>您还没有任何预约记录</p>
+        <a href="#" class="btn btn-outline">立即预约</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 我的反馈内容区 -->
+  <div id="feedback-section" class="content-section">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h2 class="section-title">我的反馈</h2>
+      <a href="#" class="btn">提交反馈</a>
+    </div>
+
+    <div class="feedback-list">
+      <div class="feedback-item">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+          <strong>关于唐代文物展厅的反馈</strong>
+          <span style="color: var(--gold);">处理中</span>
+        </div>
+        <p style="margin-bottom: 10px;">展厅内的部分文物说明牌有错别字，希望能更正。</p>
+        <div style="font-size: 12px; color: #999;">提交时间: 2023-11-10 15:30</div>
+      </div>
+
+      <div class="empty-tip" style="display: none;">
+        <p>您还没有提交过任何反馈</p>
+        <a href="#" class="btn btn-outline">提交反馈</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 个人信息内容区 -->
+  <div id="settings-section" class="content-section">
+    <h2 class="section-title">个人信息</h2>
+
+    <div class="settings-form">
+      <div class="form-group">
+        <label>用户名</label>
+        <input type="text" value="visitor123" readonly>
+      </div>
+
+      <div class="form-group">
+        <label>真实姓名</label>
+        <div style="display: flex; align-items: center;">
+          <input type="text" value="李四" style="flex: 1;">
+          <span id="auth-status" class="auth-badge auth-no" onclick="goToAuth()">未认证</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>联系电话</label>
+        <input type="tel" value="13912345678">
+      </div>
+
+      <div class="form-group">
+        <label>电子邮箱</label>
+        <input type="email" value="visitor123@example.com">
+      </div>
+
+      <div style="text-align: center; margin-top: 30px;">
+        <button class="btn" style="margin-right: 15px;">保存更改</button>
+        <button class="btn btn-outline">取消</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // 菜单切换
+  function toggleMenu() {
+    const menu = document.querySelector('.nav-links');
+    menu.classList.toggle('active');
+  }
+
+  // 用户下拉菜单切换
+  function toggleUserDropdown() {
+    const dropdown = document.querySelector('.user-dropdown');
+    dropdown.classList.toggle('active');
+  }
+
+  // 关闭弹出层
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.nav-left')) {
+      document.querySelector('.nav-links').classList.remove('active');
+    }
+    if (!e.target.closest('.user-profile')) {
+      document.querySelector('.user-dropdown').classList.remove('active');
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      document.querySelector('.nav-links').classList.remove('active');
+      document.querySelector('.user-dropdown').classList.remove('active');
+    }
+  });
+
+  // 页面切换功能
+  document.addEventListener('DOMContentLoaded', function() {
+    const navItems = document.querySelectorAll('.nav-item');
+    const contentSections = document.querySelectorAll('.content-section');
+
+    navItems.forEach(item => {
+      item.addEventListener('click', function() {
+        // 移除所有active类
+        navItems.forEach(nav => nav.classList.remove('active'));
+        contentSections.forEach(section => section.classList.remove('active'));
+
+        // 添加active类到当前点击的项
+        this.classList.add('active');
+        const sectionId = this.getAttribute('data-section') + '-section';
+        document.getElementById(sectionId).classList.add('active');
+      });
+    });
+  });
+
+  // 跳转实名认证
+  function goToAuth() {
+    const authStatus = document.getElementById('auth-status');
+    if (authStatus.classList.contains('auth-no')) {
+      window.location.href = 'auth-verify.html';
+    }
+  }
+
+  // 退出登录
+  document.getElementById('logoutBtn').addEventListener('click', function(e) {
+    e.preventDefault();
+    // 跳转到首页
+    window.location.href = 'index.html';
+  });
+
+  // 页面加载时检查认证状态
+  window.onload = function() {
+    // 这里应该是从服务器获取认证状态
+    const isAuthenticated = false; // 改为true测试已认证状态
+
+    const authStatus = document.getElementById('auth-status');
+    if (isAuthenticated) {
+      authStatus.classList.remove('auth-no');
+      authStatus.classList.add('auth-yes');
+      authStatus.textContent = '已认证';
+      authStatus.removeAttribute('onclick');
+    }
+  };
+</script>
+</body>
+</html>
