@@ -48,7 +48,9 @@
         }
 
         .nav-logo {
-            width: 180px;
+            width: 80px; /* 调整后的合适尺寸 */
+            height: auto;
+            object-fit: contain;
         }
 
         .nav-links {
@@ -193,7 +195,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
+            letter-spacing: 2px;
             margin-top: 1rem;
         }
 
@@ -261,7 +263,7 @@
 <!-- 导航栏 -->
 <nav class="palace-nav">
     <div class="nav-container">
-        <img src="palace-logo.png" alt="数字文物展厅" class="nav-logo">
+        <img src="assets/img/微信图片_20250517195745.jpg" alt="数字文物展厅" class="nav-logo">
         <div class="nav-links">
             <a href="index.html" class="nav-link">首页</a>
             <a href="#" class="nav-link">参观导览</a>
@@ -346,7 +348,7 @@
 
     // 生成随机验证码（排除易混淆字符）
     function generateCaptcha() {
-        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         let captcha = '';
         for(let i = 0; i < 4; i++) {
             captcha += chars[Math.floor(Math.random() * chars.length)];

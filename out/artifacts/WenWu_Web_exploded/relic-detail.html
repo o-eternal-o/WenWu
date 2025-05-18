@@ -1,29 +1,286 @@
-<!-- relic-detail.html -->
-<meta charset="UTF-8">
-<div class="relic-detail">
-  <div class="gallery">
-    <img :src="currentImage" class="main-image"  alt="">
-    <div class="thumbnails">
-      <img v-for="img in relic.images" :src="img" @click="currentImage = img" >
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文物详情 - 数字文物展厅系统</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-red: #9b1b1f;
+      --gold: #c8a86a;
+      --dark-bg: #2a2a2a;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Microsoft YaHei', '宋体', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      min-height: 100vh;
+    }
+
+    /* 统一导航栏样式 */
+    .palace-nav {
+      background: var(--primary-red);
+      height: 80px;
+      display: flex;
+      align-items: center;
+      padding: 0 5%;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .nav-container {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-logo {
+      width: 180px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 35px;
+      align-items: center;
+    }
+
+    .nav-link {
+      color: white;
+      text-decoration: none;
+      font-size: 18px;
+      position: relative;
+      padding: 5px 0;
+      transition: color 0.3s;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--gold);
+      transition: width 0.3s;
+    }
+
+    .nav-link:hover {
+      color: var(--gold);
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    /* 详情页内容 */
+    .relic-detail {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 40px;
+      padding: 120px 5% 50px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .gallery {
+      background: rgba(255,255,255,0.95);
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      border: 2px solid var(--gold);
+    }
+
+    .main-image {
+      width: 100%;
+      height: 500px;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 2px solid var(--gold);
+      transition: transform 0.3s;
+    }
+
+    .main-image:hover {
+      transform: scale(1.02);
+    }
+
+    .thumbnails {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+    }
+
+    .thumbnails img {
+      width: 80px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .thumbnails img:hover {
+      border-color: var(--primary-red);
+      transform: translateY(-3px);
+    }
+
+    .info {
+      background: rgba(255,255,255,0.95);
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      border: 2px solid var(--gold);
+    }
+
+    h1 {
+      color: var(--primary-red);
+      font-size: 2.5em;
+      margin-bottom: 15px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .dynasty {
+      color: var(--gold);
+      font-size: 1.4em;
+      margin-bottom: 25px;
+      font-weight: 600;
+    }
+
+    .description {
+      color: var(--dark-bg);
+      line-height: 1.8;
+      margin-bottom: 30px;
+    }
+
+    button {
+      background: var(--primary-red);
+      color: white;
+      border: none;
+      padding: 16px 40px;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      box-shadow: 0 4px 12px rgba(155,27,31,0.3);
+    }
+
+    button:hover {
+      background: #8a171a;
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+      .relic-detail {
+        padding-top: 100px;
+        gap: 20px;
+      }
+
+      .main-image {
+        height: 350px;
+      }
+
+      h1 {
+        font-size: 2em;
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- 导航栏 -->
+<nav class="palace-nav">
+  <div class="nav-container">
+    <img src="palace-logo.png" alt="数字文物展厅" class="nav-logo">
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">首页</a>
+      <a href="#" class="nav-link">参观导览</a>
+      <a href="#" class="nav-link">数字文物</a>
+      <a href="login.html" class="nav-link">登录</a>
     </div>
   </div>
+</nav>
+
+<!-- 文物详情 -->
+<div class="relic-detail">
+  <div class="gallery">
+    <img src="assets/img/relic-main.jpg" class="main-image" alt="清明上河图">
+    <div class="thumbnails">
+      <img src="assets/img/relic-thumb1.jpg" alt="细节1">
+      <img src="assets/img/relic-thumb2.jpg" alt="细节2">
+      <img src="assets/img/relic-thumb3.jpg" alt="细节3">
+    </div>
+  </div>
+
   <div class="info">
-    <h1>{{ relic.name }}</h1>
-    <p class="dynasty">{{ relic.dynasty }}</p>
-    <p class="description">{{ relic.description }}</p>
-    <button @click="handleReserve">预约参观</button>
+    <h1>清明上河图</h1>
+    <p class="dynasty">北宋·张择端</p>
+    <p class="description">
+      此画为北宋风俗画巨作，宽24.8厘米，长528.7厘米，绢本设色。
+      作品以长卷形式生动记录了中国十二世纪北宋都城东京的城市面貌
+      和当时社会各阶层人民的生活状况，是北宋时期都城汴京当年繁荣的见证，
+      也是北宋城市经济情况的写照。全图大致分为汴京郊外春光、汴河场景、
+      城内街市三部分，共绘有各色人物814人，牲畜60多匹，船只28艘，
+      房屋楼宇30多栋，车20辆，轿8顶，树木170多棵。
+    </p>
+    <button onclick="handleReserve()">立即预约</button>
   </div>
 </div>
 
-<style>
-  .relic-detail {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
+<script>
+  // 图片切换功能
+  const mainImage = document.querySelector('.main-image');
+  const thumbnails = document.querySelectorAll('.thumbnails img');
+
+  thumbnails.forEach(thumbnail => {
+    thumbnail.addEventListener('click', () => {
+      mainImage.src = thumbnail.src;
+      thumbnails.forEach(t => t.style.borderColor = 'transparent');
+      thumbnail.style.borderColor = 'var(--primary-red)';
+    });
+  });
+
+  // 预约功能
+  function handleReserve() {
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+                position: fixed;
+                bottom: 30px;
+                left: 50%;
+                transform: translateX(-50%);
+                padding: 16px 32px;
+                background: var(--primary-red);
+                color: white;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                border: 2px solid var(--gold);
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            `;
+    toast.innerHTML = `
+                <i class="fas fa-check-circle"></i>
+                预约成功！请查看预约记录
+            `;
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+      toast.remove();
+    }, 3000);
   }
-  .gallery { position: relative; }
-  .main-image { width: 100%; height: 400px; object-fit: cover; }
-  .thumbnails { display: flex; gap: 10px; margin-top: 10px; }
-  .thumbnails img { width: 60px; cursor: pointer; }
-  .info { padding: 20px; background: #f8f9fa; }
-</style>
+</script>
+</body>
+</html>

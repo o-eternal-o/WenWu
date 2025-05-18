@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>数字文物展厅 - 管理后台</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    /* 共用样式同上，新增管理员专属样式 */
+
+    /* 管理面板 */
+    .admin-dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      padding: 20px;
+    }
+
+    .admin-card {
+      background: rgba(255,255,255,0.95);
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border: 2px solid var(--gold);
+      transition: transform 0.3s;
+    }
+
+    .admin-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .stat-title {
+      color: var(--primary-red);
+      margin-bottom: 15px;
+    }
+
+    .stat-value {
+      font-size: 2.5em;
+      color: var(--gold);
+      margin: 15px 0;
+    }
+
+    /* 数据表格 */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    .data-table th,
+    .data-table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 2px solid var(--gold);
+    }
+
+    .data-table th {
+      background: rgba(155,27,31,0.1);
+    }
+
+    /* 操作按钮 */
+    .action-btn {
+      padding: 6px 12px;
+      margin: 0 4px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .edit-btn {
+      background: var(--gold);
+      color: var(--primary-red);
+    }
+
+    .delete-btn {
+      background: var(--primary-red);
+      color: white;
+    }
+  </style>
+</head>
+<body>
+<nav class="palace-nav">
+  <div class="nav-container">
+    <img src="palace-logo.png" alt="数字文物展厅" class="nav-logo">
+    <div class="nav-links">
+      <a href="#dashboard" class="nav-link">数据概览</a>
+      <a href="#manage" class="nav-link">文物管理</a>
+      <a href="#users" class="nav-link">用户管理</a>
+      <a href="#settings" class="nav-link">系统设置</a>
+    </div>
+  </div>
+</nav>
+
+<main class="main-content">
+  <div class="admin-dashboard">
+    <div class="admin-card">
+      <h3 class="stat-title">今日访问量</h3>
+      <div class="stat-value">1,234</div>
+      <p>较昨日增长 12%</p>
+    </div>
+    <div class="admin-card">
+      <h3 class="stat-title">文物总数</h3>
+      <div class="stat-value">8,888</div>
+      <p>已数字化 95%</p>
+    </div>
+    <div class="admin-card">
+      <h3 class="stat-title">用户总数</h3>
+      <div class="stat-value">23,456</div>
+      <p>本月新增 1,234</p>
+    </div>
+  </div>
+
+  <div class="admin-card">
+    <h2>最新文物登记</h2>
+    <table class="data-table">
+      <thead>
+      <tr>
+        <th>文物名称</th>
+        <th>朝代</th>
+        <th>登记时间</th>
+        <th>操作</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>青铜方鼎</td>
+        <td>商代</td>
+        <td>2024-03-01</td>
+        <td>
+          <button class="action-btn edit-btn">编辑</button>
+          <button class="action-btn delete-btn">删除</button>
+        </td>
+      </tr>
+      <!-- 更多数据行... -->
+      </tbody>
+    </table>
+  </div>
+</main>
+</body>
+</html>
