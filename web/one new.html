@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>新闻详情 - 数字文物展厅系统</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-red: #9b1b1f;
+      --gold: #c8a86a;
+      --dark-bg: #2a2a2a;
+      --light-bg: #f8f1e5;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Microsoft YaHei', '宋体', sans-serif;
+    }
+
+    body {
+      background-color: var(--light-bg);
+      color: #333;
+      line-height: 1.6;
+    }
+
+    /* 故宫风格导航栏 */
+    .palace-nav {
+      background: var(--primary-red);
+      height: 80px;
+      display: flex;
+      align-items: center;
+      padding: 0 5%;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+
+    .nav-logo {
+      width: 80px;
+      height: auto;
+      margin-right: 30px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 25px;
+    }
+
+    .nav-link {
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+      position: relative;
+      padding: 5px 0;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--gold);
+      transition: width 0.3s;
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    /* 主内容区 */
+    .main-container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    /* 返回按钮 */
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--primary-red);
+      text-decoration: none;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+
+    .back-button:hover {
+      text-decoration: underline;
+    }
+
+    /* 新闻详情卡片 */
+    .news-detail-card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      padding: 40px;
+      border: 1px solid var(--gold);
+    }
+
+    .news-header {
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .news-title {
+      color: var(--primary-red);
+      font-size: 28px;
+      margin-bottom: 15px;
+      line-height: 1.4;
+    }
+
+    .news-meta {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .meta-item i {
+      color: var(--gold);
+    }
+
+    .news-image {
+      width: 100%;
+      height: 400px;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 30px;
+    }
+
+    .news-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .news-content {
+      font-size: 16px;
+      line-height: 1.8;
+      color: #444;
+    }
+
+    .news-content p {
+      margin-bottom: 20px;
+    }
+
+    /* 相关新闻 */
+    .related-news {
+      margin-top: 50px;
+    }
+
+    .section-title {
+      font-size: 24px;
+      color: var(--primary-red);
+      margin-bottom: 25px;
+      position: relative;
+      padding-bottom: 10px;
+    }
+
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 60px;
+      height: 3px;
+      background: var(--gold);
+    }
+
+    .related-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .related-item {
+      background: white;
+      border-radius: 6px;
+      padding: 15px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s;
+    }
+
+    .related-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .related-title {
+      font-size: 16px;
+      color: var(--primary-red);
+      margin-bottom: 8px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .related-meta {
+      color: #888;
+      font-size: 13px;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+      .news-detail-card {
+        padding: 30px;
+      }
+
+      .news-title {
+        font-size: 24px;
+      }
+
+      .news-image {
+        height: 300px;
+      }
+
+      .news-meta {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .news-detail-card {
+        padding: 20px;
+      }
+
+      .news-title {
+        font-size: 20px;
+      }
+
+      .news-image {
+        height: 200px;
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- 故宫风格导航栏 -->
+<nav class="palace-nav">
+  <img src="assets/img/logo/微信图片_20250517195745.jpg" alt="数字文物展厅" class="nav-logo">
+  <div class="nav-links">
+    <a href="index.html" class="nav-link">首页</a>
+    <a href="#" class="nav-link">参观导览</a>
+    <a href="#" class="nav-link">数字文物</a>
+    <a href="#" class="nav-link">特展在线</a>
+    <a href="relic-detail.html" class="nav-link">展厅预约</a>
+  </div>
+</nav>
+
+<!-- 主内容区 -->
+<div class="main-container">
+  <a href="news.html" class="back-button">
+    <i class="fas fa-chevron-left"></i> 返回新闻列表
+  </a>
+
+  <div class="news-detail-card">
+    <div class="news-header">
+      <h1 class="news-title" id="newsTitle">故宫博物院2023年度特展《紫禁城与海上丝绸之路》即将开幕</h1>
+      <div class="news-meta">
+        <div class="meta-item">
+          <i class="far fa-calendar-alt"></i>
+          <span id="publishTime">2023-09-28 10:30</span>
+        </div>
+        <div class="meta-item">
+          <i class="far fa-user"></i>
+          <span id="publisher">发布人: 故宫博物院</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="news-image">
+      <img src="assets/img/news/news1.jpg" alt="新闻图片" id="newsImage">
+    </div>
+
+    <div class="news-content" id="newsContent">
+      <p>故宫博物院将于2023年10月15日推出年度特展《紫禁城与海上丝绸之路》，展览将展出与海上丝绸之路相关的珍贵文物200余件，其中包括首次公开展出的明代航海图等珍贵文物。展览将持续至2024年1月15日。</p>
+
+      <p>本次展览分为"海上丝路的起点"、"紫禁城中的异域珍宝"、"文化交流的见证"三个单元，通过文物、图片、多媒体等多种形式，全面展示紫禁城与海上丝绸之路的密切联系。</p>
+
+      <p>展览亮点包括：明代郑和下西洋时期的航海图、来自东南亚各国的贡品、欧洲传教士带入的科技仪器等。这些文物生动展现了明清时期中国与世界各国的文化交流与贸易往来。</p>
+
+      <p>故宫博物院院长表示："海上丝绸之路是古代中国与世界联系的重要纽带，紫禁城作为明清两代的皇宫，收藏了大量反映这一历史进程的珍贵文物。我们希望通过这次展览，让观众更深入地了解这段历史。"</p>
+
+      <p>展览期间，故宫还将举办系列学术讲座和文化活动，邀请国内外专家学者共同探讨海上丝绸之路的历史意义和当代价值。</p>
+
+      <p>门票信息：展览包含在故宫门票内，无需额外购票。为保障观展体验，建议观众提前在故宫官网预约参观时间。</p>
+    </div>
+  </div>
+
+  <!-- 相关新闻 -->
+  <div class="related-news">
+    <h2 class="section-title">相关新闻</h2>
+    <div class="related-list" id="relatedNews">
+      <!-- 相关新闻将通过JavaScript动态加载 -->
+    </div>
+  </div>
+</div>
+
+<script>
+  // 新闻数据 (实际应用中应从API获取)
+  const currentNews = {
+    news_id: 1,
+    title: "故宫博物院2023年度特展《紫禁城与海上丝绸之路》即将开幕",
+    content: `
+      <p>故宫博物院将于2023年10月15日推出年度特展《紫禁城与海上丝绸之路》，展览将展出与海上丝绸之路相关的珍贵文物200余件，其中包括首次公开展出的明代航海图等珍贵文物。展览将持续至2024年1月15日。</p>
+
+      <p>本次展览分为"海上丝路的起点"、"紫禁城中的异域珍宝"、"文化交流的见证"三个单元，通过文物、图片、多媒体等多种形式，全面展示紫禁城与海上丝绸之路的密切联系。</p>
+
+      <p>展览亮点包括：明代郑和下西洋时期的航海图、来自东南亚各国的贡品、欧洲传教士带入的科技仪器等。这些文物生动展现了明清时期中国与世界各国的文化交流与贸易往来。</p>
+
+      <p>故宫博物院院长表示："海上丝绸之路是古代中国与世界联系的重要纽带，紫禁城作为明清两代的皇宫，收藏了大量反映这一历史进程的珍贵文物。我们希望通过这次展览，让观众更深入地了解这段历史。"</p>
+
+      <p>展览期间，故宫还将举办系列学术讲座和文化活动，邀请国内外专家学者共同探讨海上丝绸之路的历史意义和当代价值。</p>
+
+      <p>门票信息：展览包含在故宫门票内，无需额外购票。为保障观展体验，建议观众提前在故宫官网预约参观时间。</p>
+    `,
+    publish_time: "2023-09-28T10:30:00",
+    publisher_id: 101,
+    publisher_name: "故宫博物院",
+    imageUrl: "assets/img/news/news1.jpg"
+  };
+
+  const relatedNews = [
+    {
+      news_id: 5,
+      title: "故宫博物院2023年春节开放安排公布",
+      publish_time: "2023-01-10T09:00:00",
+      publisher_id: 101
+    },
+    {
+      news_id: 6,
+      title: "故宫数字文物展厅新增10件珍贵文物3D模型",
+      publish_time: "2023-09-10T14:30:00",
+      publisher_id: 102
+    },
+    {
+      news_id: 7,
+      title: "故宫与敦煌研究院签署战略合作协议",
+      publish_time: "2023-08-25T11:15:00",
+      publisher_id: 101
+    }
+  ];
+
+  // 页面加载时获取新闻数据
+  document.addEventListener('DOMContentLoaded', () => {
+    // 从URL获取新闻ID
+    const urlParams = new URLSearchParams(window.location.search);
+    const newsId = urlParams.get('id');
+
+    // 实际应用中应根据newsId从API获取新闻数据
+    // 这里使用模拟数据
+    loadNewsDetail(currentNews);
+    loadRelatedNews(relatedNews);
+  });
+
+  // 加载新闻详情
+  function loadNewsDetail(news) {
+    document.getElementById('newsTitle').textContent = news.title;
+    document.getElementById('newsImage').src = news.imageUrl;
+    document.getElementById('newsImage').alt = news.title;
+    document.getElementById('newsContent').innerHTML = news.content;
+    document.getElementById('publishTime').textContent = formatDateTime(news.publish_time);
+    document.getElementById('publisher').textContent = `发布人: ${news.publisher_name || news.publisher_id}`;
+  }
+
+  // 加载相关新闻
+  function loadRelatedNews(newsList) {
+    const relatedContainer = document.getElementById('relatedNews');
+    relatedContainer.innerHTML = '';
+
+    newsList.forEach(news => {
+      const newsItem = document.createElement('div');
+      newsItem.className = 'related-item';
+      newsItem.onclick = () => {
+        window.location.href = `news-detail.html?id=${news.news_id}`;
+      };
+
+      newsItem.innerHTML = `
+        <h3 class="related-title">${news.title}</h3>
+        <div class="related-meta">
+          <span>${formatDate(news.publish_time)}</span>
+          <span> · </span>
+          <span>发布人: ${news.publisher_id}</span>
+        </div>
+      `;
+
+      relatedContainer.appendChild(newsItem);
+    });
+  }
+
+  // 格式化日期时间显示
+  function formatDateTime(dateString) {
+    const date = new Date(dateString);
+    return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())} ${padZero(date.getHours())}:${padZero(date.getMinutes())}`;
+  }
+
+  // 格式化日期显示
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())}`;
+  }
+
+  function padZero(num) {
+    return num < 10 ? `0${num}` : num;
+  }
+</script>
+</body>
+</html>
