@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文物详情 - 数字文物展厅系统</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-red: #9b1b1f;
+      --gold: #c8a86a;
+      --dark-bg: #2a2a2a;
+      --light-bg: #f8f1e5;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Microsoft YaHei', '宋体', sans-serif;
+    }
+
+    body {
+      background-color: var(--light-bg);
+      color: #333;
+      line-height: 1.6;
+    }
+
+    /* 故宫风格导航栏 */
+    .palace-nav {
+      background: var(--primary-red);
+      height: 80px;
+      display: flex;
+      align-items: center;
+      padding: 0 5%;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+
+    .nav-logo {
+      width: 80px;
+      height: auto;
+      margin-right: 30px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 25px;
+    }
+
+    .nav-link {
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+      position: relative;
+      padding: 5px 0;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--gold);
+      transition: width 0.3s;
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    /* 主内容区 */
+    .main-container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    /* 文物详情卡片 */
+    .relic-card {
+      display: flex;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      border: 1px solid var(--gold);
+    }
+
+    .relic-image {
+      flex: 0 0 45%;
+      max-height: 600px;
+      overflow: hidden;
+    }
+
+    .relic-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s;
+    }
+
+    .relic-image:hover img {
+      transform: scale(1.03);
+    }
+
+    .relic-info {
+      flex: 1;
+      padding: 40px;
+    }
+
+    .relic-title {
+      color: var(--primary-red);
+      font-size: 28px;
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid var(--gold);
+    }
+
+    .relic-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #666;
+    }
+
+    .meta-item i {
+      color: var(--gold);
+    }
+
+    .relic-description {
+      margin-bottom: 30px;
+      color: #444;
+      line-height: 1.8;
+    }
+
+    .relic-details {
+      background: rgba(200, 168, 106, 0.1);
+      padding: 20px;
+      border-radius: 6px;
+      margin-top: 30px;
+    }
+
+    .detail-item {
+      display: flex;
+      margin-bottom: 10px;
+    }
+
+    .detail-label {
+      flex: 0 0 120px;
+      font-weight: 500;
+      color: var(--primary-red);
+    }
+
+    .detail-value {
+      flex: 1;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 992px) {
+      .relic-card {
+        flex-direction: column;
+      }
+
+      .relic-image {
+        flex: 0 0 auto;
+        max-height: 400px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .relic-info {
+        padding: 25px;
+      }
+
+      .relic-title {
+        font-size: 24px;
+      }
+
+      .relic-meta {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- 故宫风格导航栏 -->
+<nav class="palace-nav">
+  <img src="assets/img/logo/微信图片_20250517195745.jpg" alt="数字文物展厅" class="nav-logo">
+  <div class="nav-links">
+    <a href="index.html" class="nav-link">首页</a>
+    <a href="#" class="nav-link">参观导览</a>
+    <a href="#" class="nav-link">数字文物</a>
+    <a href="#" class="nav-link">特展在线</a>
+    <a href="relic-detail.html" class="nav-link">展厅预约</a>
+  </div>
+</nav>
+
+<!-- 主内容区 -->
+<div class="main-container">
+  <div class="relic-card">
+    <!-- 文物图片 -->
+    <div class="relic-image">
+      <img src="assets/img/relics/s591529137db2e.jpg" alt="清明上河图">
+    </div>
+
+    <!-- 文物信息 -->
+    <div class="relic-info">
+      <h1 class="relic-title">清明上河图</h1>
+
+      <div class="relic-meta">
+        <div class="meta-item">
+          <i class="fas fa-landmark"></i>
+          <span>北宋</span>
+        </div>
+        <div class="meta-item">
+          <i class="fas fa-map-marker-alt"></i>
+          <span>书画展厅 A-12</span>
+        </div>
+        <div class="meta-item">
+          <i class="fas fa-id-card"></i>
+          <span>文物编号: REL-2023-0012</span>
+        </div>
+      </div>
+
+      <div class="relic-description">
+        <p>清明上河图是中国北宋画家张择端创作的一幅绢本设色长卷，现藏于北京故宫博物院。作品以长卷形式，采用散点透视构图法，生动记录了中国十二世纪北宋都城东京（又称汴京，今河南开封）的城市面貌和当时社会各阶层人民的生活状况。</p>
+        <p>全图大致分为汴京郊外春光、汴河场景、城内街市三部分。画中人物多达814人，衣着不同，神情各异，其间穿插各种活动，构图疏密有致，注重节奏感和韵律的变化，笔墨章法都很巧妙。</p>
+      </div>
+
+      <div class="relic-details">
+        <div class="detail-item">
+          <div class="detail-label">文物ID</div>
+          <div class="detail-value">63f8a3b1e45a8c001f3e5a2d</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">所属朝代</div>
+          <div class="detail-value">北宋</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">展厅ID</div>
+          <div class="detail-value">EXH-0012</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">图片路径</div>
+          <div class="detail-value">/assets/relics/qingming-river.jpg</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">创建人</div>
+          <div class="detail-value">ADMIN-001 (张馆长)</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">创建时间</div>
+          <div class="detail-value">2023-02-25 14:30:45</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // 这里可以添加从API获取文物详情的逻辑
+  async function fetchRelicDetail(relicId) {
+    try {
+      const response = await fetch(`/api/relics/${relicId}`);
+      if (!response.ok) {
+        throw new Error('获取文物详情失败');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error:', error);
+      // 显示错误信息给用户
+    }
+  }
+
+  // 页面加载时获取文物数据
+  document.addEventListener('DOMContentLoaded', async () => {
+    // 从URL获取文物ID
+    const urlParams = new URLSearchParams(window.location.search);
+    const relicId = urlParams.get('id');
+
+    if (relicId) {
+      const relicData = await fetchRelicDetail(relicId);
+      // 更新页面内容
+      updateRelicPage(relicData);
+    }
+  });
+
+  function updateRelicPage(data) {
+    document.querySelector('.relic-title').textContent = data.name;
+    document.querySelector('.relic-image img').src = data.imageUrl;
+    document.querySelector('.relic-image img').alt = data.name;
+    // 更新其他字段...
+  }
+</script>
+</body>
+</html>
