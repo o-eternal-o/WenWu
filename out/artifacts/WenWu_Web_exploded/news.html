@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>新闻中心 - 数字文物展厅系统</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-red: #9b1b1f;
+      --gold: #c8a86a;
+      --dark-bg: #2a2a2a;
+      --light-bg: #f8f1e5;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Microsoft YaHei', '宋体', sans-serif;
+    }
+
+    body {
+      background-color: var(--light-bg);
+      color: #333;
+      line-height: 1.6;
+    }
+
+    /* 故宫风格导航栏 - 登录后版本 */
+    .palace-nav {
+      background: var(--primary-red);
+      height: 80px;
+      display: flex;
+      align-items: center;
+      padding: 0 5%;
+      position: relative;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+
+    /* 导航容器-三列布局 */
+    .nav-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* 左侧区域（Logo+菜单） */
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-shrink: 0;
+    }
+
+    /* 右侧用户区域 */
+    .nav-right {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    /* 优化后的Logo尺寸 */
+    .nav-logo {
+      width: 80px;
+      height: auto;
+      object-fit: contain;
+    }
+
+    /* 汉堡菜单按钮 */
+    .menu-toggle {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      display: none;
+    }
+
+    /* 导航链接 */
+    .nav-links {
+      display: flex;
+      gap: 25px;
+      align-items: center;
+    }
+
+    .nav-link {
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+      position: relative;
+      padding: 5px 0;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--gold);
+      transition: width 0.3s;
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    /* 中间搜索区域 */
+    .nav-center {
+      flex: 1;
+      max-width: 600px;
+      margin: 0 20px;
+      position: relative;
+    }
+
+    /* 搜索功能 */
+    .search-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .search-toggle {
+      background: none;
+      border: none;
+      color: var(--gold);
+      font-size: 20px;
+      cursor: pointer;
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 1;
+    }
+
+    .search-box {
+      width: 100%;
+      position: static;
+      opacity: 1;
+      visibility: visible;
+      background: transparent;
+      box-shadow: none;
+      padding: 0;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 10px 10px 40px;
+      border: 2px solid var(--gold);
+      border-radius: 25px;
+      background: rgba(255,255,255,0.92);
+      color: black;
+    }
+
+    /* 用户信息区域 */
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    .user-name {
+      color: white;
+      font-weight: bold;
+    }
+
+    .user-dropdown {
+      position: absolute;
+      top: 50px;
+      right: 0;
+      background: white;
+      border-radius: 5px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      width: 150px;
+      display: none;
+      z-index: 1000;
+    }
+
+    .user-dropdown.active {
+      display: block;
+    }
+
+    .user-dropdown a {
+      display: block;
+      padding: 10px 15px;
+      color: var(--dark-bg);
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+
+    .user-dropdown a:hover {
+      background: #f5f5f5;
+    }
+
+    .user-dropdown a i {
+      margin-right: 8px;
+      color: var(--primary-red);
+    }
+
+    /* 主内容区 */
+    .main-container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    /* 页面标题 */
+    .page-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .page-title {
+      font-size: 32px;
+      color: var(--primary-red);
+      position: relative;
+      display: inline-block;
+      margin-bottom: 15px;
+    }
+
+    .page-title::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background: var(--gold);
+    }
+
+    .page-subtitle {
+      color: #666;
+      font-size: 16px;
+    }
+
+    /* 新闻筛选 */
+    .news-filters {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .filter-button {
+      padding: 8px 16px;
+      background: white;
+      border: 1px solid var(--gold);
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .filter-button:hover, .filter-button.active {
+      background: var(--gold);
+      color: white;
+    }
+
+    .search-box {
+      position: relative;
+      min-width: 250px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 8px 15px 8px 35px;
+      border: 1px solid #ddd;
+      border-radius: 20px;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #999;
+    }
+
+    /* 新闻列表 */
+    .news-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    .news-item {
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .news-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .news-image {
+      height: 200px;
+      overflow: hidden;
+    }
+
+    .news-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s;
+    }
+
+    .news-item:hover .news-image img {
+      transform: scale(1.05);
+    }
+
+    .news-content {
+      padding: 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .news-title {
+      font-size: 18px;
+      color: var(--primary-red);
+      margin-bottom: 10px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .news-excerpt {
+      color: #555;
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 15px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      flex: 1;
+    }
+
+    .news-meta {
+      display: flex;
+      justify-content: space-between;
+      color: #888;
+      font-size: 13px;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+    }
+
+    /* 分页 */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 40px;
+    }
+
+    .page-button {
+      width: 40px;
+      height: 40px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .page-button:hover, .page-button.active {
+      background: var(--primary-red);
+      color: white;
+      border-color: var(--primary-red);
+    }
+
+    .page-button.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 992px) {
+      .news-list {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      }
+    }
+
+    @media (max-width: 768px) {
+      .menu-toggle {
+        display: block;
+      }
+
+      .nav-logo {
+        width: 80px;
+      }
+
+      .nav-links {
+        position: fixed;
+        top: 80px;
+        left: 0;
+        right: 0;
+        background: var(--primary-red);
+        flex-direction: column;
+        padding: 20px;
+        display: none;
+        gap: 15px;
+        z-index: 999;
+      }
+
+      .nav-links.active {
+        display: flex;
+      }
+
+      .nav-link {
+        padding: 12px 20px;
+      }
+
+      .nav-center {
+        display: none;
+      }
+
+      .nav-right .search-toggle {
+        display: block;
+        position: static;
+        transform: none;
+      }
+
+      .user-name {
+        display: none;
+      }
+
+      .news-filters {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .filter-group {
+        width: 100%;
+        flex-wrap: wrap;
+      }
+
+      .search-box {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .news-list {
+        grid-template-columns: 1fr;
+      }
+
+      .page-title {
+        font-size: 28px;
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- 修改后的导航栏结构 - 登录后版本 -->
+<nav class="palace-nav">
+  <div class="nav-container">
+    <!-- 左侧：Logo和菜单 -->
+    <div class="nav-left">
+      <img src="assets/img/logo/微信图片_20250517195745.jpg" alt="数字文物展厅" class="nav-logo">
+      <button class="menu-toggle" onclick="toggleMenu()">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="nav-links">
+        <a href="visitors-index.html" class="nav-link">首页</a>
+        <a href="#" class="nav-link">参观导览</a>
+        <a href="#" class="nav-link">数字文物</a>
+        <a href="#" class="nav-link">特展在线</a>
+        <a href="relic-detail.html" class="nav-link">展厅预约</a>
+      </div>
+    </div>
+
+    <!-- 中间：搜索框 -->
+    <div class="nav-center">
+      <div class="search-wrapper">
+        <button class="search-toggle" onclick="toggleSearch()">
+          <i class="fas fa-search"></i>
+        </button>
+        <div class="search-box">
+          <input type="text" class="search-input" placeholder="输入文物名称或朝代...">
+        </div>
+      </div>
+    </div>
+
+    <!-- 右侧：用户信息 -->
+    <div class="nav-right">
+      <div class="user-profile" onclick="toggleUserDropdown()">
+        <span class="user-name">游客用户</span>
+        <div class="user-dropdown">
+          <a href="visitors-home.html"><i class="fas fa-user"></i> 个人中心</a>
+          <a href="index.html" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> 退出登录</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- 主内容区 -->
+<div class="main-container">
+  <div class="page-header">
+    <h1 class="page-title">新闻中心</h1>
+    <p class="page-subtitle">了解数字文物展厅最新动态和公告</p>
+  </div>
+
+  <!-- 新闻筛选 -->
+  <div class="news-filters">
+    <div class="filter-group">
+      <div class="filter-button active" data-category="all">全部新闻</div>
+      <div class="filter-button" data-category="exhibition">展览资讯</div>
+      <div class="filter-button" data-category="system">系统公告</div>
+      <div class="filter-button" data-category="activity">活动预告</div>
+    </div>
+
+    <div class="search-box">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" class="search-input" placeholder="搜索新闻标题或内容...">
+    </div>
+  </div>
+
+  <!-- 新闻列表 -->
+  <div class="news-list" id="newsList">
+    <!-- 新闻条目将通过JavaScript动态加载 -->
+  </div>
+
+  <!-- 分页 -->
+  <div class="pagination">
+    <div class="page-button disabled">
+      <i class="fas fa-chevron-left"></i>
+    </div>
+    <div class="page-button active">1</div>
+    <div class="page-button">2</div>
+    <div class="page-button">3</div>
+    <div class="page-button">4</div>
+    <div class="page-button">5</div>
+    <div class="page-button">
+      <i class="fas fa-chevron-right"></i>
+    </div>
+  </div>
+</div>
+
+<script>
+  // 新闻数据 (实际应用中应从API获取)
+  const newsData = [
+    {
+      news_id: 1,
+      title: "故宫博物院2023年度特展《紫禁城与海上丝绸之路》即将开幕",
+      content: "故宫博物院将于2023年10月15日推出年度特展《紫禁城与海上丝绸之路》，展览将展出与海上丝绸之路相关的珍贵文物200余件，其中包括首次公开展出的明代航海图等珍贵文物。展览将持续至2024年1月15日。",
+      publish_time: "2023-09-28T10:30:00",
+      publisher_id: 101,
+      publisher_name: "故宫博物院",
+      imageUrl: "assets/img/news/news1.jpg",
+      category: "exhibition"
+    },
+    {
+      news_id: 2,
+      title: "数字文物展厅系统全新升级，新增VR虚拟游览功能",
+      content: "为提升用户体验，数字文物展厅系统已完成全面升级，新增VR虚拟游览功能，用户可通过电脑或手机设备360度全景参观故宫各大展厅，感受身临其境的观展体验。系统还优化了文物展示效果，支持8K超高清文物细节查看。",
+      publish_time: "2023-09-25T14:15:00",
+      publisher_id: 102,
+      publisher_name: "技术部",
+      imageUrl: "assets/img/news/news2.jpg",
+      category: "system"
+    },
+    {
+      news_id: 3,
+      title: "故宫博物院与卢浮宫达成数字文物资源共享合作协议",
+      content: "故宫博物院与法国卢浮宫博物馆近日签署数字文物资源共享合作协议，双方将共同建设数字文物数据库，共享超过10万件文物的高清数字资源。这一合作将促进中法文化交流，为研究者提供更丰富的学术资源。",
+      publish_time: "2023-09-20T09:00:00",
+      publisher_id: 103,
+      publisher_name: "国际合作部",
+      imageUrl: "assets/img/news/news3.jpg",
+      category: "activity"
+    },
+    {
+      news_id: 4,
+      title: "故宫文物修复成果展：让文物重获新生的技艺",
+      content: "故宫博物院文物修复成果展将于10月1日在文华殿开展，展览将展示近年来修复的50余件珍贵文物，并详细介绍文物修复的过程和技术。展览特别设置了修复师工作场景复原区，让观众近距离了解文物修复工作。",
+      publish_time: "2023-09-15T16:45:00",
+      publisher_id: 104,
+      publisher_name: "文物保护部",
+      imageUrl: "assets/img/news/news4.jpg",
+      category: "exhibition"
+    },
+    {
+      news_id: 5,
+      title: "故宫博物院2023年春节开放安排公布",
+      content: "故宫博物院2023年春节期间开放时间安排如下：除夕(1月21日)全天闭馆，正月初一至初六(1月22日-27日)正常开放，开放时间为8:30-16:30。春节期间将推出多项传统文化活动，欢迎游客前来参观。",
+      publish_time: "2023-01-10T09:00:00",
+      publisher_id: 101,
+      publisher_name: "故宫博物院",
+      imageUrl: "assets/img/news/news5.jpg",
+      category: "announcement"
+    },
+    {
+      news_id: 6,
+      title: "故宫数字文物展厅新增10件珍贵文物3D模型",
+      content: "数字文物展厅系统新增10件珍贵文物3D模型，包括《清明上河图》、《千里江山图》等传世名作。用户可通过系统360度查看文物细节，并了解相关历史背景和艺术价值。",
+      publish_time: "2023-09-10T14:30:00",
+      publisher_id: 102,
+      publisher_name: "技术部",
+      imageUrl: "assets/img/news/news6.jpg",
+      category: "system"
+    },
+    {
+      news_id: 7,
+      title: "故宫与敦煌研究院签署战略合作协议",
+      content: "故宫博物院与敦煌研究院签署战略合作协议，双方将在文物保护、数字化展示、学术研究等领域展开深度合作。首期合作项目将聚焦敦煌壁画与故宫藏品的对比研究。",
+      publish_time: "2023-08-25T11:15:00",
+      publisher_id: 101,
+      publisher_name: "故宫博物院",
+      imageUrl: "assets/img/news/news7.jpg",
+      category: "activity"
+    },
+    {
+      news_id: 8,
+      title: "故宫数字文物展厅用户突破100万",
+      content: "故宫数字文物展厅系统自上线以来，累计访问用户已突破100万人次。系统提供了超过5000件文物的高清图像和详细资料，成为公众了解故宫藏品的重要平台。",
+      publish_time: "2023-08-10T10:00:00",
+      publisher_id: 102,
+      publisher_name: "技术部",
+      imageUrl: "assets/img/news/news8.jpg",
+      category: "system"
+    }
+  ];
+
+  // DOM元素
+  const newsList = document.getElementById('newsList');
+  const filterButtons = document.querySelectorAll('.filter-button');
+  const searchInput = document.querySelector('.search-input');
+  const pageButtons = document.querySelectorAll('.page-button');
+
+  // 当前筛选状态
+  let currentFilter = 'all';
+  let currentSearch = '';
+  let currentPage = 1;
+  const itemsPerPage = 8;
+
+  // 初始化页面
+  document.addEventListener('DOMContentLoaded', () => {
+    renderNews();
+    setupEventListeners();
+  });
+
+  // 渲染新闻列表
+  function renderNews() {
+    // 筛选新闻
+    let filteredNews = newsData.filter(news => {
+      const matchesCategory = currentFilter === 'all' || news.category === currentFilter;
+      const matchesSearch = currentSearch === '' ||
+              news.title.toLowerCase().includes(currentSearch) ||
+              news.content.toLowerCase().includes(currentSearch);
+      return matchesCategory && matchesSearch;
+    });
+
+    // 分页
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const paginatedNews = filteredNews.slice(startIndex, startIndex + itemsPerPage);
+
+    // 渲染
+    newsList.innerHTML = '';
+
+    if (paginatedNews.length === 0) {
+      newsList.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#666;">暂无相关新闻</div>';
+      return;
+    }
+
+    paginatedNews.forEach(news => {
+      const newsItem = document.createElement('div');
+      newsItem.className = 'news-item';
+      newsItem.onclick = () => {
+        window.location.href = `news-detail.html?id=${news.news_id}`;
+      };
+
+      newsItem.innerHTML = `
+        <div class="news-image">
+          <img src="${news.imageUrl}" alt="${news.title}">
+        </div>
+        <div class="news-content">
+          <h3 class="news-title">${news.title}</h3>
+          <p class="news-excerpt">${news.content}</p>
+          <div class="news-meta">
+            <span>${formatDate(news.publish_time)}</span>
+            <span>${news.publisher_name}</span>
+          </div>
+        </div>
+      `;
+
+      newsList.appendChild(newsItem);
+    });
+
+    // 更新分页状态
+    updatePagination(filteredNews.length);
+  }
+
+  // 更新分页按钮状态
+  function updatePagination(totalItems) {
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+    // 简化分页逻辑，实际项目中可以实现更复杂的分页
+    pageButtons.forEach((button, index) => {
+      if (index === 0) {
+        button.classList.toggle('disabled', currentPage === 1);
+      } else if (index === pageButtons.length - 1) {
+        button.classList.toggle('disabled', currentPage === totalPages);
+      } else if (index <= 5) {
+        if (index <= totalPages) {
+          button.style.display = 'flex';
+          button.textContent = index;
+          button.classList.toggle('active', index === currentPage);
+        } else {
+          button.style.display = 'none';
+        }
+      }
+    });
+  }
+
+  // 设置事件监听
+  function setupEventListeners() {
+    // 筛选按钮点击事件
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        filterButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        currentFilter = button.dataset.category;
+        currentPage = 1;
+        renderNews();
+      });
+    });
+
+    // 搜索框输入事件
+    searchInput.addEventListener('input', (e) => {
+      currentSearch = e.target.value.toLowerCase();
+      currentPage = 1;
+      renderNews();
+    });
+
+    // 分页按钮点击事件
+    pageButtons.forEach((button, index) => {
+      button.addEventListener('click', () => {
+        if (button.classList.contains('disabled')) return;
+
+        if (index === 0) {
+          // 上一页
+          currentPage = Math.max(1, currentPage - 1);
+        } else if (index === pageButtons.length - 1) {
+          // 下一页
+          currentPage += 1;
+        } else {
+          // 页码
+          currentPage = parseInt(button.textContent);
+        }
+
+        renderNews();
+      });
+    });
+  }
+
+  // 菜单切换
+  function toggleMenu() {
+    const menu = document.querySelector('.nav-links');
+    menu.classList.toggle('active');
+  }
+
+  // 搜索框切换
+  function toggleSearch() {
+    const searchBox = document.querySelector('.search-box');
+    searchBox.classList.toggle('active');
+  }
+
+  // 用户下拉菜单切换
+  function toggleUserDropdown() {
+    const dropdown = document.querySelector('.user-dropdown');
+    dropdown.classList.toggle('active');
+  }
+
+  // 关闭弹出层
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-wrapper')) {
+      document.querySelector('.search-box').classList.remove('active');
+    }
+    if (!e.target.closest('.nav-left')) {
+      document.querySelector('.nav-links').classList.remove('active');
+    }
+    if (!e.target.closest('.user-profile')) {
+      document.querySelector('.user-dropdown').classList.remove('active');
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      document.querySelector('.search-box').classList.remove('active');
+      document.querySelector('.nav-links').classList.remove('active');
+      document.querySelector('.user-dropdown').classList.remove('active');
+    }
+  });
+
+  // 格式化日期显示
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())}`;
+  }
+
+  function padZero(num) {
+    return num < 10 ? `0${num}` : num;
+  }
+
+  // 退出登录
+  document.getElementById('logoutBtn').addEventListener('click', function(e) {
+    e.preventDefault();
+    window.location.href = 'index.html';
+  });
+</script>
+</body>
+</html>

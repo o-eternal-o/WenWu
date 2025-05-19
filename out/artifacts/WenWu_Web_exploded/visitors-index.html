@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>数字文物展厅系统 - 用户中心</title>
+    <title>数字文物展厅系统</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
             --primary-red: #9b1b1f;
             --gold: #c8a86a;
             --dark-bg: #2a2a2a;
+            --light-bg: #f8f1e5;
         }
 
         * {
@@ -17,6 +18,12 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Microsoft YaHei', '宋体', sans-serif;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: #333;
+            line-height: 1.6;
         }
 
         /* 故宫风格导航栏 */
@@ -195,6 +202,113 @@
             color: var(--primary-red);
         }
 
+        /* 新闻推送区域 */
+        .news-section {
+            padding: 40px 5%;
+            background: rgba(200, 168, 106, 0.1);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 28px;
+            color: var(--primary-red);
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 80px;
+            height: 3px;
+            background: var(--gold);
+        }
+
+        .view-all {
+            color: var(--primary-red);
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .news-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .news-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .news-image {
+            height: 180px;
+            overflow: hidden;
+        }
+
+        .news-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .news-card:hover .news-image img {
+            transform: scale(1.05);
+        }
+
+        .news-content {
+            padding: 20px;
+        }
+
+        .news-title {
+            font-size: 18px;
+            color: var(--primary-red);
+            margin-bottom: 10px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .news-excerpt {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .news-meta {
+            display: flex;
+            justify-content: space-between;
+            color: #888;
+            font-size: 13px;
+        }
+
         /* 响应式设计 */
         @media (max-width: 768px) {
             .menu-toggle {
@@ -323,22 +437,38 @@
             background: white;
         }
 
-        /* 用户专属内容 */
-        .user-welcome {
-            text-align: center;
+        /* 快速访问区域 */
+        .quick-access {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
             margin: 30px 0;
-            padding: 20px;
-            background: rgba(155, 27, 31, 0.1);
-            border-radius: 8px;
         }
 
-        .user-welcome h2 {
+        .access-card {
+            text-align: center;
+            padding: 20px;
+            border-radius: 8px;
+            background: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+            width: 180px;
+        }
+
+        .access-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .access-card i {
+            font-size: 36px;
             color: var(--primary-red);
             margin-bottom: 10px;
         }
 
-        .user-welcome p {
-            color: #555;
+        .access-card h3 {
+            color: var(--dark-bg);
         }
     </style>
 </head>
@@ -396,10 +526,16 @@
     </div>
 </div>
 
-<!-- 用户欢迎信息 -->
-<div class="user-welcome">
-    <h2>欢迎回来，游客用户</h2>
-    <p>您有2个即将到来的预约，3件收藏的文物</p>
+<!-- 新闻推送区域 -->
+<div class="news-section">
+    <div class="section-header">
+        <h2 class="section-title">最新动态</h2>
+        <a href="news.html" class="view-all">查看全部 <i class="fas fa-chevron-right"></i></a>
+    </div>
+
+    <div class="news-grid" id="newsContainer">
+        <!-- 新闻卡片将通过JavaScript动态加载 -->
+    </div>
 </div>
 
 <!-- 核心内容 -->
@@ -412,11 +548,19 @@
         <i class="fas fa-university"></i>
         <h3>虚拟游览</h3>
     </div>
+    <div class="access-card">
+        <i class="fas fa-calendar-alt"></i>
+        <h3>展览预约</h3>
+    </div>
+    <div class="access-card">
+        <i class="fas fa-book"></i>
+        <h3>文物图录</h3>
+    </div>
 </div>
 
 <div class="divider"></div>
 
-<h2 class="section-title">为您推荐</h2>
+<h2 class="section-title">今日推荐</h2>
 <div class="relic-grid">
     <div class="relic-card">
         <div class="relic-image">
@@ -436,9 +580,110 @@
             <p>明·永乐年间</p>
         </div>
     </div>
+    <div class="relic-card">
+        <div class="relic-image">
+            <img src="assets/img/bronze.jpg" alt="青铜器">
+        </div>
+        <div class="relic-info">
+            <h3>司母戊鼎</h3>
+            <p>商代晚期</p>
+        </div>
+    </div>
 </div>
 
 <script>
+    // 新闻数据 (实际应用中应从API获取)
+    const newsData = [
+        {
+            news_id: 1,
+            title: "故宫博物院2023年度特展《紫禁城与海上丝绸之路》即将开幕",
+            content: "故宫博物院将于2023年10月15日推出年度特展《紫禁城与海上丝绸之路》，展览将展出与海上丝绸之路相关的珍贵文物200余件，其中包括首次公开展出的明代航海图等珍贵文物。展览将持续至2024年1月15日。",
+            publish_time: "2023-09-28T10:30:00",
+            publisher_id: 101,
+            publisher_name: "故宫博物院",
+            imageUrl: "assets/img/news/news1.jpg"
+        },
+        {
+            news_id: 2,
+            title: "数字文物展厅系统全新升级，新增VR虚拟游览功能",
+            content: "为提升用户体验，数字文物展厅系统已完成全面升级，新增VR虚拟游览功能，用户可通过电脑或手机设备360度全景参观故宫各大展厅，感受身临其境的观展体验。系统还优化了文物展示效果，支持8K超高清文物细节查看。",
+            publish_time: "2023-09-25T14:15:00",
+            publisher_id: 102,
+            publisher_name: "技术部",
+            imageUrl: "assets/img/news/news2.jpg"
+        },
+        {
+            news_id: 3,
+            title: "故宫博物院与卢浮宫达成数字文物资源共享合作协议",
+            content: "故宫博物院与法国卢浮宫博物馆近日签署数字文物资源共享合作协议，双方将共同建设数字文物数据库，共享超过10万件文物的高清数字资源。这一合作将促进中法文化交流，为研究者提供更丰富的学术资源。",
+            publish_time: "2023-09-20T09:00:00",
+            publisher_id: 103,
+            publisher_name: "国际合作部",
+            imageUrl: "assets/img/news/news3.jpg"
+        },
+        {
+            news_id: 4,
+            title: "故宫文物修复成果展：让文物重获新生的技艺",
+            content: "故宫博物院文物修复成果展将于10月1日在文华殿开展，展览将展示近年来修复的50余件珍贵文物，并详细介绍文物修复的过程和技术。展览特别设置了修复师工作场景复原区，让观众近距离了解文物修复工作。",
+            publish_time: "2023-09-15T16:45:00",
+            publisher_id: 104,
+            publisher_name: "文物保护部",
+            imageUrl: "assets/img/news/news4.jpg"
+        }
+    ];
+
+    // DOM元素
+    const newsContainer = document.getElementById('newsContainer');
+
+    // 初始化页面
+    document.addEventListener('DOMContentLoaded', () => {
+        renderNews(newsData);
+        setupEventListeners();
+    });
+
+    // 渲染新闻卡片
+    function renderNews(newsItems) {
+        newsContainer.innerHTML = '';
+
+        newsItems.forEach(news => {
+            const newsCard = document.createElement('div');
+            newsCard.className = 'news-card';
+            newsCard.dataset.id = news.news_id;
+
+            newsCard.innerHTML = `
+                <div class="news-image">
+                    <img src="${news.imageUrl}" alt="${news.title}">
+                </div>
+                <div class="news-content">
+                    <h3 class="news-title">${news.title}</h3>
+                    <p class="news-excerpt">${news.content}</p>
+                    <div class="news-meta">
+                        <span>${formatDate(news.publish_time)}</span>
+                        <span>发布人: ${news.publisher_name || news.publisher_id}</span>
+                    </div>
+                </div>
+            `;
+
+            newsCard.addEventListener('click', () => {
+                window.location.href = `news-detail.html?id=${news.news_id}`;
+            });
+
+            newsContainer.appendChild(newsCard);
+        });
+    }
+
+    // 设置事件监听
+    function setupEventListeners() {
+        // 菜单切换
+        document.querySelector('.menu-toggle').addEventListener('click', toggleMenu);
+
+        // 搜索框切换
+        document.querySelector('.search-toggle').addEventListener('click', toggleSearch);
+
+        // 用户下拉菜单切换
+        document.querySelector('.user-profile').addEventListener('click', toggleUserDropdown);
+    }
+
     // 菜单切换
     function toggleMenu() {
         const menu = document.querySelector('.nav-links');
@@ -477,6 +722,16 @@
             document.querySelector('.user-dropdown').classList.remove('active');
         }
     });
+
+    // 格式化日期显示
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())}`;
+    }
+
+    function padZero(num) {
+        return num < 10 ? `0${num}` : num;
+    }
 
     // 轮播图逻辑
     let currentSlide = 0;

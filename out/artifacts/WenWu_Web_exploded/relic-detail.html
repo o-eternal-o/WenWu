@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>文物详情 - 数字文物展厅系统</title>
+  <title>展厅预约 - 数字文物展厅系统</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
     :root {
       --primary-red: #9b1b1f;
       --gold: #c8a86a;
       --dark-bg: #2a2a2a;
+      --light-bg: #f8f1e5;
     }
 
     * {
@@ -20,48 +21,77 @@
     }
 
     body {
-      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-      min-height: 100vh;
+      background-color: var(--light-bg);
+      color: #333;
+      line-height: 1.6;
     }
 
-    /* 统一导航栏样式 */
+    /* 故宫风格导航栏 - 登录后版本 */
     .palace-nav {
       background: var(--primary-red);
       height: 80px;
       display: flex;
       align-items: center;
       padding: 0 5%;
+      position: relative;
       box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-      position: fixed;
-      width: 100%;
-      top: 0;
-      z-index: 1000;
     }
 
+    /* 导航容器-三列布局 */
     .nav-container {
-      width: 100%;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      height: 100%;
     }
 
+    /* 左侧区域（Logo+菜单） */
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-shrink: 0;
+    }
+
+    /* 右侧用户区域 */
+    .nav-right {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    /* 优化后的Logo尺寸 */
     .nav-logo {
-      width: 180px;
+      width: 80px;
+      height: auto;
+      object-fit: contain;
     }
 
+    /* 汉堡菜单按钮 */
+    .menu-toggle {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      display: none;
+    }
+
+    /* 导航链接 */
     .nav-links {
       display: flex;
-      gap: 35px;
+      gap: 25px;
       align-items: center;
     }
 
     .nav-link {
       color: white;
       text-decoration: none;
-      font-size: 18px;
+      font-size: 16px;
       position: relative;
       padding: 5px 0;
-      transition: color 0.3s;
     }
 
     .nav-link::after {
@@ -75,212 +105,720 @@
       transition: width 0.3s;
     }
 
-    .nav-link:hover {
-      color: var(--gold);
-    }
-
     .nav-link:hover::after {
       width: 100%;
     }
 
-    /* 详情页内容 */
-    .relic-detail {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 40px;
-      padding: 120px 5% 50px;
-      max-width: 1200px;
-      margin: 0 auto;
+    /* 中间搜索区域 */
+    .nav-center {
+      flex: 1;
+      max-width: 600px;
+      margin: 0 20px;
+      position: relative;
     }
 
-    .gallery {
-      background: rgba(255,255,255,0.95);
-      padding: 20px;
-      border-radius: 16px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-      border: 2px solid var(--gold);
-    }
-
-    .main-image {
-      width: 100%;
-      height: 500px;
-      object-fit: cover;
-      border-radius: 12px;
-      border: 2px solid var(--gold);
-      transition: transform 0.3s;
-    }
-
-    .main-image:hover {
-      transform: scale(1.02);
-    }
-
-    .thumbnails {
+    /* 搜索功能 */
+    .search-wrapper {
       display: flex;
-      gap: 15px;
-      margin-top: 20px;
-      overflow-x: auto;
-      padding-bottom: 10px;
+      align-items: center;
+      justify-content: center;
     }
 
-    .thumbnails img {
-      width: 80px;
-      height: 60px;
-      object-fit: cover;
-      border-radius: 8px;
-      border: 2px solid transparent;
+    .search-toggle {
+      background: none;
+      border: none;
+      color: var(--gold);
+      font-size: 20px;
       cursor: pointer;
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 1;
+    }
+
+    .search-box {
+      width: 100%;
+      position: static;
+      opacity: 1;
+      visibility: visible;
+      background: transparent;
+      box-shadow: none;
+      padding: 0;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 10px 10px 40px;
+      border: 2px solid var(--gold);
+      border-radius: 25px;
+      background: rgba(255,255,255,0.92);
+      color: black;
+    }
+
+    /* 用户信息区域 */
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    .user-name {
+      color: white;
+      font-weight: bold;
+    }
+
+    .user-dropdown {
+      position: absolute;
+      top: 50px;
+      right: 0;
+      background: white;
+      border-radius: 5px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      width: 150px;
+      display: none;
+      z-index: 1000;
+    }
+
+    .user-dropdown.active {
+      display: block;
+    }
+
+    .user-dropdown a {
+      display: block;
+      padding: 10px 15px;
+      color: var(--dark-bg);
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+
+    .user-dropdown a:hover {
+      background: #f5f5f5;
+    }
+
+    .user-dropdown a i {
+      margin-right: 8px;
+      color: var(--primary-red);
+    }
+
+    /* 预约页面内容 */
+    .reservation-container {
+      max-width: 1200px;
+      margin: 100px auto 50px;
+      padding: 0 5%;
+    }
+
+    .page-title {
+      text-align: center;
+      margin-bottom: 50px;
+      position: relative;
+    }
+
+    .page-title h1 {
+      font-size: 2.5em;
+      color: var(--primary-red);
+      margin-bottom: 15px;
+    }
+
+    .page-title::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background: var(--gold);
+    }
+
+    /* 预约类型切换 */
+    .reservation-type {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 40px;
+      gap: 20px;
+    }
+
+    .type-tab {
+      padding: 12px 30px;
+      background: white;
+      border: 2px solid var(--gold);
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: 600;
       transition: all 0.3s;
     }
 
-    .thumbnails img:hover {
-      border-color: var(--primary-red);
-      transform: translateY(-3px);
+    .type-tab.active {
+      background: var(--gold);
+      color: white;
     }
 
-    .info {
-      background: rgba(255,255,255,0.95);
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-      border: 2px solid var(--gold);
+    /* 展厅列表 */
+    .hall-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 30px;
+      margin-bottom: 50px;
     }
 
-    h1 {
+    .hall-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .hall-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    }
+
+    .hall-image {
+      height: 200px;
+      position: relative;
+    }
+
+    .hall-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .hall-info {
+      padding: 20px;
+    }
+
+    .hall-name {
+      font-size: 1.5em;
       color: var(--primary-red);
-      font-size: 2.5em;
+      margin-bottom: 10px;
+    }
+
+    .hall-description {
+      color: #555;
       margin-bottom: 15px;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
 
-    .dynasty {
-      color: var(--gold);
-      font-size: 1.4em;
-      margin-bottom: 25px;
-      font-weight: 600;
+    .hall-capacity {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #777;
+      font-size: 14px;
     }
 
-    .description {
-      color: var(--dark-bg);
-      line-height: 1.8;
+    /* 预约表单 */
+    .reservation-form {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      display: none;
+    }
+
+    .reservation-form.active {
+      display: block;
+    }
+
+    .form-title {
+      font-size: 1.8em;
+      color: var(--primary-red);
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
       margin-bottom: 30px;
     }
 
-    button {
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #555;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+
+    .form-control:focus {
+      border-color: var(--gold);
+      outline: none;
+    }
+
+    .time-slots {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .time-slot {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .time-slot:hover {
+      border-color: var(--gold);
+    }
+
+    .time-slot.selected {
+      background: var(--gold);
+      color: white;
+      border-color: var(--gold);
+    }
+
+    .time-slot.disabled {
+      background: #f5f5f5;
+      color: #999;
+      cursor: not-allowed;
+    }
+
+    .submit-btn {
+      display: block;
+      width: 100%;
+      max-width: 300px;
+      margin: 40px auto 0;
+      padding: 15px;
       background: var(--primary-red);
       color: white;
       border: none;
-      padding: 16px 40px;
       border-radius: 8px;
-      font-size: 1.1rem;
+      font-size: 18px;
+      font-weight: 600;
       cursor: pointer;
       transition: all 0.3s;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      box-shadow: 0 4px 12px rgba(155,27,31,0.3);
     }
 
-    button:hover {
+    .submit-btn:hover {
       background: #8a171a;
       transform: translateY(-2px);
     }
 
+    /* 响应式设计 */
     @media (max-width: 768px) {
-      .relic-detail {
-        padding-top: 100px;
-        gap: 20px;
+      .menu-toggle {
+        display: block;
       }
 
-      .main-image {
-        height: 350px;
+      .nav-logo {
+        width: 80px;
       }
 
-      h1 {
+      .nav-links {
+        position: fixed;
+        top: 80px;
+        left: 0;
+        right: 0;
+        background: var(--primary-red);
+        flex-direction: column;
+        padding: 20px;
+        display: none;
+        gap: 15px;
+        z-index: 999;
+      }
+
+      .nav-links.active {
+        display: flex;
+      }
+
+      .nav-link {
+        padding: 12px 20px;
+      }
+
+      .nav-center {
+        display: none;
+      }
+
+      .nav-right .search-toggle {
+        display: block;
+        position: static;
+        transform: none;
+      }
+
+      .user-name {
+        display: none;
+      }
+
+      .reservation-container {
+        margin-top: 80px;
+      }
+
+      .page-title h1 {
         font-size: 2em;
+      }
+
+      .reservation-type {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .hall-list {
+        grid-template-columns: 1fr;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
       }
     }
   </style>
 </head>
 <body>
-<!-- 导航栏 -->
+<!-- 修改后的导航栏结构 - 登录后版本 -->
 <nav class="palace-nav">
   <div class="nav-container">
-    <img src="palace-logo.png" alt="数字文物展厅" class="nav-logo">
-    <div class="nav-links">
-      <a href="index.html" class="nav-link">首页</a>
-      <a href="#" class="nav-link">参观导览</a>
-      <a href="#" class="nav-link">数字文物</a>
-      <a href="login.html" class="nav-link">登录</a>
+    <!-- 左侧：Logo和菜单 -->
+    <div class="nav-left">
+      <img src="assets/img/logo/微信图片_20250517195745.jpg" alt="数字文物展厅" class="nav-logo">
+      <button class="menu-toggle" onclick="toggleMenu()">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="nav-links">
+        <a href="#" class="nav-link">参观导览</a>
+        <a href="#" class="nav-link">数字文物</a>
+        <a href="#" class="nav-link">特展在线</a>
+        <a href="#" class="nav-link">文创精品</a>
+        <a href="relic-detail.html" class="nav-link">展厅预约</a>
+      </div>
+    </div>
+
+    <!-- 中间：搜索框 -->
+    <div class="nav-center">
+      <div class="search-wrapper">
+        <button class="search-toggle" onclick="toggleSearch()">
+          <i class="fas fa-search"></i>
+        </button>
+        <div class="search-box">
+          <input type="text" class="search-input" placeholder="输入文物名称或朝代...">
+        </div>
+      </div>
+    </div>
+
+    <!-- 右侧：用户信息 -->
+    <div class="nav-right">
+      <div class="user-profile" onclick="toggleUserDropdown()">
+        <span class="user-name">游客用户</span>
+        <div class="user-dropdown">
+          <a href="visitors-home.html"><i class="fas fa-user"></i> 个人中心</a>
+          <a href="index.html" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> 退出登录</a>
+        </div>
+      </div>
     </div>
   </div>
 </nav>
 
-<!-- 文物详情 -->
-<div class="relic-detail">
-  <div class="gallery">
-    <img src="assets/img/relic-main.jpg" class="main-image" alt="清明上河图">
-    <div class="thumbnails">
-      <img src="assets/img/relic-thumb1.jpg" alt="细节1">
-      <img src="assets/img/relic-thumb2.jpg" alt="细节2">
-      <img src="assets/img/relic-thumb3.jpg" alt="细节3">
+<!-- 预约页面内容 -->
+<div class="reservation-container">
+  <div class="page-title">
+    <h1>展厅预约</h1>
+    <p>预约您心仪的展厅，享受专属参观体验</p>
+  </div>
+
+  <!-- 预约类型切换 -->
+  <div class="reservation-type">
+    <div class="type-tab active" data-type="individual">个人预约</div>
+    <div class="type-tab" data-type="group">团体预约</div>
+  </div>
+
+  <!-- 展厅列表 -->
+  <div class="hall-list">
+    <div class="hall-card" data-hall="1">
+      <div class="hall-image">
+        <img src="assets/img/halls/hall1.jpg" alt="陶瓷馆">
+      </div>
+      <div class="hall-info">
+        <h3 class="hall-name">陶瓷馆</h3>
+        <p class="hall-description">展示中国历代陶瓷精品，从新石器时代陶器到明清官窑瓷器，展现中国陶瓷艺术的发展历程。</p>
+        <div class="hall-capacity">
+          <i class="fas fa-users"></i>
+          <span>最大容量: 50人</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hall-card" data-hall="2">
+      <div class="hall-image">
+        <img src="assets/img/halls/hall2.jpg" alt="书画馆">
+      </div>
+      <div class="hall-info">
+        <h3 class="hall-name">书画馆</h3>
+        <p class="hall-description">收藏历代名家书画作品，包括书法、绘画等艺术精品，展现中国传统书画艺术的魅力。</p>
+        <div class="hall-capacity">
+          <i class="fas fa-users"></i>
+          <span>最大容量: 30人</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hall-card" data-hall="3">
+      <div class="hall-image">
+        <img src="assets/img/halls/hall3.jpg" alt="青铜器馆">
+      </div>
+      <div class="hall-info">
+        <h3 class="hall-name">青铜器馆</h3>
+        <p class="hall-description">展示商周时期青铜器精品，包括礼器、乐器、兵器等，展现中国古代青铜艺术的辉煌成就。</p>
+        <div class="hall-capacity">
+          <i class="fas fa-users"></i>
+          <span>最大容量: 40人</span>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class="info">
-    <h1>清明上河图</h1>
-    <p class="dynasty">北宋·张择端</p>
-    <p class="description">
-      此画为北宋风俗画巨作，宽24.8厘米，长528.7厘米，绢本设色。
-      作品以长卷形式生动记录了中国十二世纪北宋都城东京的城市面貌
-      和当时社会各阶层人民的生活状况，是北宋时期都城汴京当年繁荣的见证，
-      也是北宋城市经济情况的写照。全图大致分为汴京郊外春光、汴河场景、
-      城内街市三部分，共绘有各色人物814人，牲畜60多匹，船只28艘，
-      房屋楼宇30多栋，车20辆，轿8顶，树木170多棵。
-    </p>
-    <button onclick="handleReserve()">立即预约</button>
+  <!-- 个人预约表单 -->
+  <div class="reservation-form active" id="individual-form">
+    <h2 class="form-title">陶瓷馆 - 个人预约</h2>
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="name">姓名</label>
+        <input type="text" id="name" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="phone">手机号码</label>
+        <input type="tel" id="phone" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="id-number">身份证号</label>
+        <input type="text" id="id-number" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="visit-date">参观日期</label>
+        <input type="date" id="visit-date" class="form-control" required>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>可预约时间段</label>
+      <div class="time-slots">
+        <div class="time-slot">09:00-10:30</div>
+        <div class="time-slot">10:30-12:00</div>
+        <div class="time-slot">13:00-14:30</div>
+        <div class="time-slot">14:30-16:00</div>
+        <div class="time-slot disabled">16:00-17:30</div>
+      </div>
+    </div>
+
+    <button type="submit" class="submit-btn">提交预约</button>
+  </div>
+
+  <!-- 团体预约表单 -->
+  <div class="reservation-form" id="group-form">
+    <h2 class="form-title">陶瓷馆 - 团体预约</h2>
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="group-name">团体名称</label>
+        <input type="text" id="group-name" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="contact-person">联系人</label>
+        <input type="text" id="contact-person" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="group-phone">联系电话</label>
+        <input type="tel" id="group-phone" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="group-size">团体人数</label>
+        <input type="number" id="group-size" class="form-control" min="5" max="50" required>
+      </div>
+      <div class="form-group">
+        <label for="group-date">参观日期</label>
+        <input type="date" id="group-date" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="purpose">参观目的</label>
+        <select id="purpose" class="form-control" required>
+          <option value="">请选择参观目的</option>
+          <option value="study">学习考察</option>
+          <option value="tour">旅游参观</option>
+          <option value="research">学术研究</option>
+          <option value="other">其他</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>可预约时间段</label>
+      <div class="time-slots">
+        <div class="time-slot">09:00-11:00</div>
+        <div class="time-slot">11:00-13:00</div>
+        <div class="time-slot">13:00-15:00</div>
+        <div class="time-slot">15:00-17:00</div>
+        <div class="time-slot disabled">17:00-19:00</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="special-request">特殊需求</label>
+      <textarea id="special-request" class="form-control" rows="3"></textarea>
+    </div>
+
+    <button type="submit" class="submit-btn">提交预约</button>
   </div>
 </div>
 
 <script>
-  // 图片切换功能
-  const mainImage = document.querySelector('.main-image');
-  const thumbnails = document.querySelectorAll('.thumbnails img');
+  // 菜单切换
+  function toggleMenu() {
+    const menu = document.querySelector('.nav-links');
+    menu.classList.toggle('active');
+  }
 
-  thumbnails.forEach(thumbnail => {
-    thumbnail.addEventListener('click', () => {
-      mainImage.src = thumbnail.src;
-      thumbnails.forEach(t => t.style.borderColor = 'transparent');
-      thumbnail.style.borderColor = 'var(--primary-red)';
+  // 搜索框切换
+  function toggleSearch() {
+    const searchBox = document.querySelector('.search-box');
+    searchBox.classList.toggle('active');
+  }
+
+  // 用户下拉菜单切换
+  function toggleUserDropdown() {
+    const dropdown = document.querySelector('.user-dropdown');
+    dropdown.classList.toggle('active');
+  }
+
+  // 关闭弹出层
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-wrapper')) {
+      document.querySelector('.search-box').classList.remove('active');
+    }
+    if (!e.target.closest('.nav-left')) {
+      document.querySelector('.nav-links').classList.remove('active');
+    }
+    if (!e.target.closest('.user-profile')) {
+      document.querySelector('.user-dropdown').classList.remove('active');
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      document.querySelector('.search-box').classList.remove('active');
+      document.querySelector('.nav-links').classList.remove('active');
+      document.querySelector('.user-dropdown').classList.remove('active');
+    }
+  });
+
+  // 预约类型切换
+  const typeTabs = document.querySelectorAll('.type-tab');
+  const individualForm = document.getElementById('individual-form');
+  const groupForm = document.getElementById('group-form');
+
+  typeTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      typeTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      if (tab.dataset.type === 'individual') {
+        individualForm.classList.add('active');
+        groupForm.classList.remove('active');
+      } else {
+        individualForm.classList.remove('active');
+        groupForm.classList.add('active');
+      }
     });
   });
 
-  // 预约功能
-  function handleReserve() {
-    const toast = document.createElement('div');
-    toast.style.cssText = `
-                position: fixed;
-                bottom: 30px;
-                left: 50%;
-                transform: translateX(-50%);
-                padding: 16px 32px;
-                background: var(--primary-red);
-                color: white;
-                border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-                border: 2px solid var(--gold);
-                display: flex;
-                align-items: center;
-                gap: 12px;
-            `;
-    toast.innerHTML = `
-                <i class="fas fa-check-circle"></i>
-                预约成功！请查看预约记录
-            `;
-    document.body.appendChild(toast);
+  // 展厅选择
+  const hallCards = document.querySelectorAll('.hall-card');
+  const formTitles = document.querySelectorAll('.form-title');
 
-    setTimeout(() => {
-      toast.remove();
-    }, 3000);
-  }
+  hallCards.forEach(card => {
+    card.addEventListener('click', () => {
+      const hallId = card.dataset.hall;
+      const hallName = card.querySelector('.hall-name').textContent;
+
+      // 更新表单标题
+      formTitles.forEach(title => {
+        title.textContent = `${hallName} - ${title.textContent.split('-')[1].trim()}`;
+      });
+
+      // 这里可以添加AJAX请求获取该展厅的可预约时间等信息
+      console.log(`选择了展厅: ${hallName}`);
+    });
+  });
+
+  // 时间段选择
+  const timeSlots = document.querySelectorAll('.time-slot:not(.disabled)');
+
+  timeSlots.forEach(slot => {
+    slot.addEventListener('click', () => {
+      document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+      slot.classList.add('selected');
+    });
+  });
+
+  // 表单提交
+  const submitButtons = document.querySelectorAll('.submit-btn');
+
+  submitButtons.forEach(button => {
+    button.addEventListener('click', (e) => {
+      e.preventDefault();
+
+      const toast = document.createElement('div');
+      toast.style.cssText = `
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 16px 32px;
+        background: var(--primary-red);
+        color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        border: 2px solid var(--gold);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        z-index: 1000;
+      `;
+      toast.innerHTML = `
+        <i class="fas fa-check-circle"></i>
+        预约成功！请查看预约记录
+      `;
+      document.body.appendChild(toast);
+
+      setTimeout(() => {
+        toast.remove();
+      }, 3000);
+    });
+  });
+
+  // 禁用过去的日期
+  const today = new Date().toISOString().split('T')[0];
+  document.querySelectorAll('input[type="date"]').forEach(input => {
+    input.min = today;
+  });
+
+  // 退出登录
+  document.getElementById('logoutBtn').addEventListener('click', function(e) {
+    e.preventDefault();
+    window.location.href = 'index.html';
+  });
 </script>
 </body>
 </html>
