@@ -26,25 +26,64 @@
       line-height: 1.6;
     }
 
-    /* 故宫风格导航栏 */
+    /* 故宫风格导航栏 - 登录后版本 */
     .palace-nav {
       background: var(--primary-red);
       height: 80px;
       display: flex;
       align-items: center;
       padding: 0 5%;
+      position: relative;
       box-shadow: 0 2px 10px rgba(0,0,0,0.3);
     }
 
+    /* 导航容器-三列布局 */
+    .nav-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* 左侧区域（Logo+菜单） */
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-shrink: 0;
+    }
+
+    /* 右侧用户区域 */
+    .nav-right {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    /* 优化后的Logo尺寸 */
     .nav-logo {
       width: 80px;
       height: auto;
-      margin-right: 30px;
+      object-fit: contain;
     }
 
+    /* 汉堡菜单按钮 */
+    .menu-toggle {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      display: none;
+    }
+
+    /* 导航链接 */
     .nav-links {
       display: flex;
       gap: 25px;
+      align-items: center;
     }
 
     .nav-link {
@@ -68,6 +107,99 @@
 
     .nav-link:hover::after {
       width: 100%;
+    }
+
+    /* 中间搜索区域 */
+    .nav-center {
+      flex: 1;
+      max-width: 600px;
+      margin: 0 20px;
+      position: relative;
+    }
+
+    /* 搜索功能 */
+    .search-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .search-toggle {
+      background: none;
+      border: none;
+      color: var(--gold);
+      font-size: 20px;
+      cursor: pointer;
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 1;
+    }
+
+    .search-box {
+      width: 100%;
+      position: static;
+      opacity: 1;
+      visibility: visible;
+      background: transparent;
+      box-shadow: none;
+      padding: 0;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 10px 10px 40px;
+      border: 2px solid var(--gold);
+      border-radius: 25px;
+      background: rgba(255,255,255,0.92);
+      color: black;
+    }
+
+    /* 用户信息区域 */
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    .user-name {
+      color: white;
+      font-weight: bold;
+    }
+
+    .user-dropdown {
+      position: absolute;
+      top: 50px;
+      right: 0;
+      background: white;
+      border-radius: 5px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      width: 150px;
+      display: none;
+      z-index: 1000;
+    }
+
+    .user-dropdown.active {
+      display: block;
+    }
+
+    .user-dropdown a {
+      display: block;
+      padding: 10px 15px;
+      color: var(--dark-bg);
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+
+    .user-dropdown a:hover {
+      background: #f5f5f5;
+    }
+
+    .user-dropdown a i {
+      margin-right: 8px;
+      color: var(--primary-red);
     }
 
     /* 主内容区 */
@@ -273,6 +405,49 @@
     }
 
     @media (max-width: 768px) {
+      .menu-toggle {
+        display: block;
+      }
+
+      .nav-logo {
+        width: 80px;
+      }
+
+      .nav-links {
+        position: fixed;
+        top: 80px;
+        left: 0;
+        right: 0;
+        background: var(--primary-red);
+        flex-direction: column;
+        padding: 20px;
+        display: none;
+        gap: 15px;
+        z-index: 999;
+      }
+
+      .nav-links.active {
+        display: flex;
+      }
+
+      .nav-link {
+        padding: 12px 20px;
+      }
+
+      .nav-center {
+        display: none;
+      }
+
+      .nav-right .search-toggle {
+        display: block;
+        position: static;
+        transform: none;
+      }
+
+      .user-name {
+        display: none;
+      }
+
       .news-filters {
         flex-direction: column;
         align-items: flex-start;
@@ -300,15 +475,46 @@
   </style>
 </head>
 <body>
-<!-- 故宫风格导航栏 -->
+<!-- 修改后的导航栏结构 - 登录后版本 -->
 <nav class="palace-nav">
-  <img src="assets/img/logo/微信图片_20250517195745.jpg" alt="数字文物展厅" class="nav-logo">
-  <div class="nav-links">
-    <a href="index.html" class="nav-link">首页</a>
-    <a href="#" class="nav-link">参观导览</a>
-    <a href="#" class="nav-link">数字文物</a>
-    <a href="#" class="nav-link">特展在线</a>
-    <a href="relic-detail.html" class="nav-link">展厅预约</a>
+  <div class="nav-container">
+    <!-- 左侧：Logo和菜单 -->
+    <div class="nav-left">
+      <img src="assets/img/logo/微信图片_20250517195745.jpg" alt="数字文物展厅" class="nav-logo">
+      <button class="menu-toggle" onclick="toggleMenu()">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="nav-links">
+        <a href="visitors-index.html" class="nav-link">首页</a>
+        <a href="#" class="nav-link">参观导览</a>
+        <a href="#" class="nav-link">数字文物</a>
+        <a href="#" class="nav-link">特展在线</a>
+        <a href="relic-detail.html" class="nav-link">展厅预约</a>
+      </div>
+    </div>
+
+    <!-- 中间：搜索框 -->
+    <div class="nav-center">
+      <div class="search-wrapper">
+        <button class="search-toggle" onclick="toggleSearch()">
+          <i class="fas fa-search"></i>
+        </button>
+        <div class="search-box">
+          <input type="text" class="search-input" placeholder="输入文物名称或朝代...">
+        </div>
+      </div>
+    </div>
+
+    <!-- 右侧：用户信息 -->
+    <div class="nav-right">
+      <div class="user-profile" onclick="toggleUserDropdown()">
+        <span class="user-name">游客用户</span>
+        <div class="user-dropdown">
+          <a href="visitors-home.html"><i class="fas fa-user"></i> 个人中心</a>
+          <a href="index.html" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> 退出登录</a>
+        </div>
+      </div>
+    </div>
   </div>
 </nav>
 
@@ -572,6 +778,45 @@
     });
   }
 
+  // 菜单切换
+  function toggleMenu() {
+    const menu = document.querySelector('.nav-links');
+    menu.classList.toggle('active');
+  }
+
+  // 搜索框切换
+  function toggleSearch() {
+    const searchBox = document.querySelector('.search-box');
+    searchBox.classList.toggle('active');
+  }
+
+  // 用户下拉菜单切换
+  function toggleUserDropdown() {
+    const dropdown = document.querySelector('.user-dropdown');
+    dropdown.classList.toggle('active');
+  }
+
+  // 关闭弹出层
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-wrapper')) {
+      document.querySelector('.search-box').classList.remove('active');
+    }
+    if (!e.target.closest('.nav-left')) {
+      document.querySelector('.nav-links').classList.remove('active');
+    }
+    if (!e.target.closest('.user-profile')) {
+      document.querySelector('.user-dropdown').classList.remove('active');
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      document.querySelector('.search-box').classList.remove('active');
+      document.querySelector('.nav-links').classList.remove('active');
+      document.querySelector('.user-dropdown').classList.remove('active');
+    }
+  });
+
   // 格式化日期显示
   function formatDate(dateString) {
     const date = new Date(dateString);
@@ -581,6 +826,12 @@
   function padZero(num) {
     return num < 10 ? `0${num}` : num;
   }
+
+  // 退出登录
+  document.getElementById('logoutBtn').addEventListener('click', function(e) {
+    e.preventDefault();
+    window.location.href = 'index.html';
+  });
 </script>
 </body>
 </html>
