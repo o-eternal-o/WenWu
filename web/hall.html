@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><!DOCTYPE html>
+        <html lang="zh-CN">
+        <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>展厅浏览 - 数字文物展厅系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-red: #9b1b1f;
+            --gold: #c8a86a;
+            --dark-bg: #2a2a2a;
+            --light-bg: #f8f1e5;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', '宋体', sans-serif;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* 故宫风格导航栏 */
+        .palace-nav {
+            background: var(--primary-red);
+            height: 80px;
+            display: flex;
+            align-items: center;
+            padding: 0 5%;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .nav-logo {
+            width: 80px;
+            height: auto;
+            margin-right: 30px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            position: relative;
+            padding: 5px 0;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gold);
+            transition: width 0.3s;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* 主内容区 */
+        .main-container {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        /* 页面标题 */
+        .page-title {
+            text-align: center;
+            color: var(--primary-red);
+            font-size: 32px;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--gold);
+        }
+
+        /* 展厅筛选 */
+        .hall-filters {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .filter-button {
+            padding: 8px 16px;
+            background: white;
+            border: 1px solid var(--gold);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-button:hover, .filter-button.active {
+            background: var(--gold);
+            color: white;
+        }
+
+        /* 展厅网格 */
+        .halls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+
+        .hall-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            border: 1px solid var(--gold);
+            cursor: pointer;
+        }
+
+        .hall-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .hall-image {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .hall-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .hall-card:hover .hall-image img {
+            transform: scale(1.05);
+        }
+
+        .hall-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--primary-red);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .hall-content {
+            padding: 20px;
+        }
+
+        .hall-name {
+            font-size: 20px;
+            color: var(--primary-red);
+            margin-bottom: 10px;
+        }
+
+        .hall-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .meta-item i {
+            color: var(--gold);
+        }
+
+        .hall-description {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .view-button {
+            display: inline-block;
+            padding: 8px 16px;
+            background: var(--primary-red);
+            color: white;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .view-button:hover {
+            background: #7e1518;
+        }
+
+        /* 展厅详情弹窗 */
+        .hall-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .hall-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 30px;
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+
+        .hall-modal.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .close-modal:hover {
+            color: var(--primary-red);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .halls-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+
+            .hall-image {
+                height: 180px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .halls-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hall-filters {
+                justify-content: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- 故宫风格导航栏 -->
+<nav class="palace-nav">
+    <img src="assets/img/logo/微信图片_20250517195745.jpg" alt="数字文物展厅" class="nav-logo">
+    <div class="nav-links">
+        <a href="index.html" class="nav-link">首页</a>
+        <a href="#" class="nav-link">参观导览</a>
+        <a href="#" class="nav-link">数字文物</a>
+        <a href="#" class="nav-link">特展在线</a>
+        <a href="relic-detail.html" class="nav-link">展厅预约</a>
+    </div>
+</nav>
+
+<!-- 主内容区 -->
+<div class="main-container">
+    <h1 class="page-title">展厅浏览</h1>
+
+    <!-- 展厅筛选 -->
+    <div class="hall-filters">
+        <div class="filter-button active" data-filter="all">全部展厅</div>
+        <div class="filter-button" data-filter="painting">书画艺术</div>
+        <div class="filter-button" data-filter="ceramic">陶瓷艺术</div>
+        <div class="filter-button" data-filter="bronze">青铜器</div>
+        <div class="filter-button" data-filter="jade">玉器</div>
+    </div>
+
+    <!-- 展厅网格 -->
+    <div class="halls-grid" id="hallsContainer">
+        <!-- 展厅卡片将通过JavaScript动态加载 -->
+    </div>
+</div>
+
+<!-- 展厅详情弹窗 -->
+<div class="hall-modal" id="hallModal">
+    <div class="modal-content">
+        <div class="close-modal" id="closeModal">&times;</div>
+        <!-- 弹窗内容将通过JavaScript动态加载 -->
+    </div>
+</div>
+
+<script>
+    // 展厅数据 (实际应用中应从API获取)
+    const hallsData = [
+        {
+            id: "64a2b3c4d5e6f7001f8g9h0i",
+            hall_name: "中国古代书画艺术展厅",
+            dynasty: "宋元明清",
+            type: "书画艺术",
+            layout_rules: "按历史时期分为四个展区：宋代、元代、明代、清代\n每个展区按书画类型细分：卷轴、册页、扇面\n重要文物单独设置展柜，配备专业照明",
+            is_open_booking: true,
+            booking_start_time: "09:00:00",
+            booking_end_time: "16:30:00",
+            max_capacity: 80,
+            description: "集中展示从魏晋南北朝至明清时期的代表性书画作品，包括卷轴、册页、扇面等多种形式。展厅以历史发展为线索，系统呈现了中国书画艺术的演变历程和独特魅力。",
+            imageUrl: "assets/exhibitions/chinese-painting.jpg",
+            category: "painting"
+        },
+        {
+            id: "64b4c5d6e7f8002g9h0i1j",
+            hall_name: "中国古代陶瓷艺术展厅",
+            dynasty: "新石器时代至清代",
+            type: "陶瓷艺术",
+            layout_rules: "按历史时期分为六个展区\n按窑系分类展示\n重点展示官窑精品",
+            is_open_booking: true,
+            booking_start_time: "09:00:00",
+            booking_end_time: "16:30:00",
+            max_capacity: 100,
+            description: "展示中国陶瓷发展史，从新石器时代的彩陶到明清时期的景德镇瓷器，完整呈现中国陶瓷艺术的辉煌成就。",
+            imageUrl: "assets/exhibitions/chinese-ceramic.jpg",
+            category: "ceramic"
+        },
+        {
+            id: "64c5d6e7f8g9003h0i1j2k",
+            hall_name: "中国古代青铜器展厅",
+            dynasty: "夏商周至汉代",
+            type: "青铜器",
+            layout_rules: "按用途分类：礼器、乐器、兵器、生活用具\n按时期展示发展演变\n重点展示国家级文物",
+            is_open_booking: false,
+            booking_start_time: "09:00:00",
+            booking_end_time: "16:30:00",
+            max_capacity: 60,
+            description: "集中展示夏商周时期的青铜器精品，包括鼎、簋、爵等礼器，展现中国古代青铜文化的独特魅力。",
+            imageUrl: "assets/exhibitions/chinese-bronze.jpg",
+            category: "bronze"
+        },
+        {
+            id: "64d6e7f8g9h004i1j2k3l",
+            hall_name: "中国古代玉器展厅",
+            dynasty: "新石器时代至清代",
+            type: "玉器",
+            layout_rules: "按历史时期展示\n按功能分类：礼器、佩饰、陈设\n设置专题展区展示著名玉器",
+            is_open_booking: true,
+            booking_start_time: "09:00:00",
+            booking_end_time: "16:30:00",
+            max_capacity: 70,
+            description: "展示中国玉器发展史，从红山文化、良渚文化的史前玉器到明清时期的精美玉雕，展现中国玉文化的深厚底蕴。",
+            imageUrl: "assets/exhibitions/chinese-jade.jpg",
+            category: "jade"
+        }
+    ];
+
+    // DOM元素
+    const hallsContainer = document.getElementById('hallsContainer');
+    const hallModal = document.getElementById('hallModal');
+    const modalContent = document.querySelector('.modal-content');
+    const closeModal = document.getElementById('closeModal');
+    const filterButtons = document.querySelectorAll('.filter-button');
+
+    // 初始化页面
+    document.addEventListener('DOMContentLoaded', () => {
+        renderHalls(hallsData);
+        setupEventListeners();
+    });
+
+    // 渲染展厅卡片
+    function renderHalls(halls) {
+        hallsContainer.innerHTML = '';
+
+        halls.forEach(hall => {
+            const hallCard = document.createElement('div');
+            hallCard.className = 'hall-card';
+            hallCard.dataset.id = hall.id;
+            hallCard.dataset.category = hall.category;
+
+            hallCard.innerHTML = `
+        <div class="hall-image">
+          <img src="${hall.imageUrl}" alt="${hall.hall_name}">
+          ${hall.is_open_booking ? '<div class="hall-badge">可预约</div>' : '<div class="hall-badge" style="background:#666">维护中</div>'}
+        </div>
+        <div class="hall-content">
+          <h3 class="hall-name">${hall.hall_name}</h3>
+          <div class="hall-meta">
+            <div class="meta-item">
+              <i class="fas fa-landmark"></i>
+              <span>${hall.dynasty}</span>
+            </div>
+            <div class="meta-item">
+              <i class="fas fa-tag"></i>
+              <span>${hall.type}</span>
+            </div>
+          </div>
+          <p class="hall-description">${hall.description}</p>
+          <a href="#" class="view-button" data-id="${hall.id}">查看详情</a>
+        </div>
+      `;
+
+            hallsContainer.appendChild(hallCard);
+        });
+    }
+
+    // 设置事件监听
+    function setupEventListeners() {
+        // 展厅卡片点击事件
+        document.addEventListener('click', (e) => {
+            // 点击查看详情按钮
+            if (e.target.classList.contains('view-button')) {
+                e.preventDefault();
+                const hallId = e.target.dataset.id;
+                showHallDetail(hallId);
+            }
+
+            // 点击整个卡片区域
+            if (e.target.closest('.hall-card')) {
+                const hallCard = e.target.closest('.hall-card');
+                const hallId = hallCard.dataset.id;
+                showHallDetail(hallId);
+            }
+        });
+
+        // 关闭弹窗
+        closeModal.addEventListener('click', () => {
+            hallModal.classList.remove('active');
+        });
+
+        // 点击弹窗外部关闭
+        hallModal.addEventListener('click', (e) => {
+            if (e.target === hallModal) {
+                hallModal.classList.remove('active');
+            }
+        });
+
+        // 筛选按钮点击事件
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                const filter = button.dataset.filter;
+                if (filter === 'all') {
+                    renderHalls(hallsData);
+                } else {
+                    const filteredHalls = hallsData.filter(hall => hall.category === filter);
+                    renderHalls(filteredHalls);
+                }
+            });
+        });
+    }
+
+    // 显示展厅详情
+    function showHallDetail(hallId) {
+        const hall = hallsData.find(h => h.id === hallId);
+        if (!hall) return;
+
+        modalContent.innerHTML = `
+      <div class="close-modal" id="closeModal">&times;</div>
+      <h2>${hall.hall_name}</h2>
+      
+      <div style="display: flex; gap: 30px; margin: 25px 0;">
+        <div style="flex: 0 0 50%;">
+          <img src="${hall.imageUrl}" alt="${hall.hall_name}" style="width: 100%; border-radius: 6px;">
+        </div>
+        <div style="flex: 1;">
+          <h3 style="color: var(--primary-red); margin-bottom: 15px;">基本信息</h3>
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="padding: 8px 0; width: 100px; color: var(--primary-red); font-weight: 500;">展厅ID</td>
+              <td style="padding: 8px 0;">${hall.id}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; color: var(--primary-red); font-weight: 500;">所属朝代</td>
+              <td style="padding: 8px 0;">${hall.dynasty}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; color: var(--primary-red); font-weight: 500;">文物类型</td>
+              <td style="padding: 8px 0;">${hall.type}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; color: var(--primary-red); font-weight: 500;">最大容量</td>
+              <td style="padding: 8px 0;">${hall.max_capacity}人</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; color: var(--primary-red); font-weight: 500;">预约状态</td>
+              <td style="padding: 8px 0;">${hall.is_open_booking ? '开放预约' : '暂不开放'}</td>
+            </tr>
+            ${hall.is_open_booking ? `
+            <tr>
+              <td style="padding: 8px 0; color: var(--primary-red); font-weight: 500;">预约时间</td>
+              <td style="padding: 8px 0;">${formatTime(hall.booking_start_time)} - ${formatTime(hall.booking_end_time)}</td>
+            </tr>
+            ` : ''}
+          </table>
+        </div>
+      </div>
+      
+      <h3 style="color: var(--primary-red); margin: 25px 0 15px;">展厅布局规则</h3>
+      <div style="background: rgba(200, 168, 106, 0.1); padding: 15px; border-radius: 6px; white-space: pre-line;">${hall.layout_rules}</div>
+      
+      <h3 style="color: var(--primary-red); margin: 25px 0 15px;">展厅描述</h3>
+      <p style="line-height: 1.8;">${hall.description}</p>
+      
+      <div style="margin-top: 30px; text-align: center;">
+        ${hall.is_open_booking ?
+            `<a href="booking.html?hall_id=${hall.id}" style="display: inline-block; padding: 12px 24px; background: var(--primary-red); color: white; border-radius: 4px; text-decoration: none;">立即预约</a>` :
+            '<button style="padding: 12px 24px; background: #ccc; color: white; border: none; border-radius: 4px; cursor: not-allowed;">暂不开放预约</button>'}
+      </div>
+    `;
+
+        hallModal.classList.add('active');
+        document.getElementById('closeModal').addEventListener('click', () => {
+            hallModal.classList.remove('active');
+        });
+    }
+
+    // 格式化时间显示 (HH:MM:SS → HH:MM)
+    function formatTime(timeString) {
+        if (!timeString) return '--:--';
+        return timeString.substring(0, 5);
+    }
+</script>
+</body>
+</html></title>
+</head>
+<body>
+
+</body>
+</html>
