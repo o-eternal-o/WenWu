@@ -1,4 +1,4 @@
-package com.wenwu.Servlet;
+package com.login;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletException;

@@ -1,6 +1,6 @@
-package com.wenwu.Servlet;
+package com.login;
 
-import com.wenwu.SQL.DatabaseConnector;
+import com.SQL.DatabaseConnector;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -19,6 +19,8 @@ public class LoginServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // 获取表单数据
+
+        request.setCharacterEncoding("UTF-8");
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
@@ -26,16 +28,24 @@ public class LoginServlet extends HttpServlet {
         boolean isValidUser = validateUser(username, password);
 
         if (isValidUser) {
+            // 查询用户角色
+            String role = getUserRole(username);
+
             // 创建会话并存储用户信息
             HttpSession session = request.getSession();
             session.setAttribute("username", username);
+            session.setAttribute("role", role); // 将角色存储到会话中
 
-            // 登录成功，重定向到欢迎页面
-            response.sendRedirect("success.jsp");
+            // 根据角色跳转页面
+            if ("admin".equalsIgnoreCase(role)) {
+                response.sendRedirect(request.getContextPath() + "/AdminServlet"); // 管理员
+            } else {
+                response.sendRedirect(request.getContextPath() + "/visitors.jsp"); // 普通用户页面
+            }
         } else {
             // 登录失败，设置错误消息并重定向回登录页面
             request.setAttribute("errorMessage", "用户名或密码错误，请重试！");
-            request.getRequestDispatcher("Login.jsp").forward(request, response);
+            request.getRequestDispatcher("login.jsp").forward(request, response);
         }
     }
 
@@ -54,5 +64,25 @@ public class LoginServlet extends HttpServlet {
             e.printStackTrace();
             return false;  // 出现异常时视为验证失败
         }
+    }
+
+    /**
+     * 查询用户角色
+     * @param username 用户名
+     * @return 用户角色（如 admin 或其他）
+     */
+    private String getUserRole(String username) {
+        String sql = "SELECT role FROM user WHERE username = ?";
+        String role = "user"; // 默认角色为普通用户
+
+        try (ResultSet rs = dbConnector.executeQuery(sql, username)) {
+            if (rs.next()) {
+                role = rs.getString("role"); // 获取角色列的值
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return role; // 返回角色值
     }
 }

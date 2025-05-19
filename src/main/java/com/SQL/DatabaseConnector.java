@@ -1,4 +1,4 @@
-package com.wenwu.SQL;
+package com.SQL;
 
 import java.sql.*;
 

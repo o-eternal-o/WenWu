@@ -222,7 +222,7 @@
   </script>
 
   <div class="login-link">
-    已有账号？<a href="Login.jsp">立即登录</a>
+    已有账号？<a href="login.jsp">立即登录</a>
   </div>
 </div>
 

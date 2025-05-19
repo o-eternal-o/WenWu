@@ -1,4 +1,6 @@
-package com.wenwu.Servlet;
+package com.login;
+
+import com.SQL.DatabaseConnector;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -7,6 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 @WebServlet("/RegisterServlet")
 public class RegisterServlet extends HttpServlet {
@@ -55,7 +60,7 @@ public class RegisterServlet extends HttpServlet {
             return;
         }
 
-        // 数据库操作：保存用户信息（此处仅模拟）
+        // 数据库操作：保存用户信息
         boolean isRegistered = saveUserToDatabase(username, password);
 
         if (isRegistered) {
@@ -70,16 +75,35 @@ public class RegisterServlet extends HttpServlet {
     }
 
     /**
-     * 模拟将用户信息保存到数据库的方法
+     * 将用户信息保存到数据库的方法
      *
      * @param username 用户名
      * @param password 密码
      * @return 是否保存成功
      */
     private boolean saveUserToDatabase(String username, String password) {
-        // 实际开发中，这里应该使用JDBC或ORM框架（如Hibernate、MyBatis）与数据库交互
-        System.out.println("Saving user to database: " + username + ", " + password);
-        // 模拟返回true表示保存成功
-        return true;
+        DatabaseConnector dbConnector = new DatabaseConnector();
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            // 获取数据库连接
+            conn = dbConnector.getConnection();
+
+            // 插入用户的SQL语句
+            String sql = "INSERT INTO user (username, password) VALUES (?, ?)";
+            pstmt = conn.prepareStatement(sql);
+
+            // 设置参数
+            pstmt.setString(1, username);
+            pstmt.setString(2, password); // 注意：实际开发中应对密码进行加密处理
+
+            // 执行插入操作
+            int affectedRows = pstmt.executeUpdate();
+            return affectedRows > 0; // 如果受影响行数大于0，则插入成功
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
