@@ -148,6 +148,91 @@
       color: black;
     }
 
+    /* 登录提示弹窗 */
+    .login-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+
+    .login-modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .login-box {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+      transform: translateY(20px);
+      transition: transform 0.3s;
+    }
+
+    .login-modal.active .login-box {
+      transform: translateY(0);
+    }
+
+    .login-icon {
+      font-size: 50px;
+      color: var(--primary-red);
+      margin-bottom: 20px;
+    }
+
+    .login-message {
+      font-size: 18px;
+      margin-bottom: 25px;
+      color: var(--dark-bg);
+    }
+
+    .login-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .login-btn {
+      padding: 12px 25px;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: var(--primary-red);
+      color: white;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background: #8a171a;
+    }
+
+    .btn-secondary {
+      background: none;
+      color: var(--primary-red);
+      border: 1px solid var(--primary-red);
+    }
+
+    .btn-secondary:hover {
+      background: #f5f5f5;
+    }
+
     /* 响应式设计 */
     @media (max-width: 768px) {
       .menu-toggle {
@@ -378,6 +463,40 @@
       padding: 15px;
       background: white;
     }
+
+    /* 快速访问区域 */
+    .quick-access {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin: 30px 0;
+    }
+
+    .access-card {
+      text-align: center;
+      padding: 20px;
+      border-radius: 8px;
+      background: white;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      transition: all 0.3s;
+      cursor: pointer;
+      width: 180px;
+    }
+
+    .access-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    .access-card i {
+      font-size: 36px;
+      color: var(--primary-red);
+      margin-bottom: 10px;
+    }
+
+    .access-card h3 {
+      color: var(--dark-bg);
+    }
   </style>
 </head>
 <body>
@@ -395,7 +514,7 @@
         <a href="#" class="nav-link">数字文物</a>
         <a href="#" class="nav-link">特展在线</a>
         <a href="#" class="nav-link">文创精品</a>
-        <a href="relic-detail.html" class="nav-link">展厅预约</a>
+        <a href="relic-detail.html" class="nav-link" id="reservation-link">展厅预约</a>
       </div>
     </div>
 
@@ -417,6 +536,22 @@
     </div>
   </div>
 </nav>
+
+<!-- 登录提示弹窗 -->
+<div class="login-modal" id="loginModal">
+  <div class="login-box">
+    <div class="login-icon">
+      <i class="fas fa-user-lock"></i>
+    </div>
+    <div class="login-message">
+      请先登录以继续操作
+    </div>
+    <div class="login-buttons">
+      <button class="login-btn btn-primary" onclick="window.location.href='login.html'">立即登录</button>
+      <button class="login-btn btn-secondary" onclick="hideLoginModal()">稍后再说</button>
+    </div>
+  </div>
+</div>
 
 <!-- 轮播图 -->
 <div class="palace-carousel">
@@ -446,9 +581,13 @@
 </div>
 
 <div class="quick-access">
-  <div class="access-card">
+  <div class="access-card" id="virtual-tour">
     <i class="fas fa-university"></i>
     <h3>虚拟游览</h3>
+  </div>
+  <div class="access-card" id="reservation-card">
+    <i class="fas fa-calendar-alt"></i>
+    <h3>展厅预约</h3>
   </div>
 </div>
 
@@ -506,6 +645,10 @@
 
   // DOM元素
   const newsContainer = document.getElementById('newsContainer');
+  const loginModal = document.getElementById('loginModal');
+  const reservationLink = document.getElementById('reservation-link');
+  const reservationCard = document.getElementById('reservation-card');
+  const viewAllLink = document.querySelector('.view-all');
 
   // 初始化页面
   document.addEventListener('DOMContentLoaded', () => {
@@ -536,19 +679,34 @@
         </div>
       `;
 
+      // 添加新闻卡片点击事件
+      newsCard.addEventListener('click', (e) => {
+        e.preventDefault();
+        showLoginModal();
+      });
+
       newsContainer.appendChild(newsCard);
     });
   }
 
   // 设置事件监听
   function setupEventListeners() {
-    // 新闻卡片点击事件
-    document.addEventListener('click', (e) => {
-      const newsCard = e.target.closest('.news-card');
-      if (newsCard) {
-        const newsId = newsCard.dataset.id;
-        window.location.href = `news-detail.html?id=${newsId}`;
-      }
+    // 预约链接点击事件
+    reservationLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      showLoginModal();
+    });
+
+    // 预约卡片点击事件
+    reservationCard.addEventListener('click', (e) => {
+      e.preventDefault();
+      showLoginModal();
+    });
+
+    // "查看全部"新闻链接点击事件
+    viewAllLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      showLoginModal();
     });
 
     // 菜单切换
@@ -556,6 +714,16 @@
 
     // 搜索框切换
     document.querySelector('.search-toggle').addEventListener('click', toggleSearch);
+  }
+
+  // 显示登录提示弹窗
+  function showLoginModal() {
+    loginModal.classList.add('active');
+  }
+
+  // 隐藏登录提示弹窗
+  function hideLoginModal() {
+    loginModal.classList.remove('active');
   }
 
   // 菜单切换
@@ -584,6 +752,7 @@
     if (e.key === 'Escape') {
       document.querySelector('.search-box').classList.remove('active');
       document.querySelector('.nav-links').classList.remove('active');
+      hideLoginModal();
     }
   });
 
