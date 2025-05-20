@@ -4,6 +4,7 @@
     <option name="state">
       <map>
         <entry key="file://$PROJECT_DIR$/web/admin/admin.jsp" value="file://$PROJECT_DIR$/web/admin" />
+        <entry key="file://$PROJECT_DIR$/web/admin/function/hall_edit.jsp" value="file://$PROJECT_DIR$/web/admin/function" />
         <entry key="file://$PROJECT_DIR$/web/admin/news_list.jsp" value="file://$PROJECT_DIR$/web/admin" />
         <entry key="file://$PROJECT_DIR$/web/assets/admin.jsp" value="file://$PROJECT_DIR$/web/assets" />
         <entry key="file://$PROJECT_DIR$/web/register.jsp" value="file://$PROJECT_DIR$/web" />

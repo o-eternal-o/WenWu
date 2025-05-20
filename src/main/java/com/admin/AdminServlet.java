@@ -19,13 +19,9 @@ public class AdminServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // 获取统计数据
         int openHallCount = getOpenHallCount(); // 开放展厅数量
-        System.out.println("openHallCount: " + openHallCount);
         int relicTotal = getRelicTotal(); // 文物总数
-        System.out.println(relicTotal);
         int pendingBookings = getPendingBookingCount(); // 待审预约数量
-        System.out.println(pendingBookings);
         int userTotal = getUserTotal(); // 用户总数
-        System.out.println(userTotal);
 
         // 将数据存储到请求范围中
         request.setAttribute("openHallCount", openHallCount);
@@ -42,7 +38,7 @@ public class AdminServlet extends HttpServlet {
      * @return 开放展厅的数量
      */
     private int getOpenHallCount() {
-        String sql = "SELECT COUNT(*) AS count FROM exhibition_hall WHERE is_open_booking=1";
+        String sql = "SELECT COUNT(*) AS count FROM halls WHERE is_open_booking=1";
         try (ResultSet rs = dbConnector.executeQuery(sql)) {
             if (rs.next()) {
                 return rs.getInt("count");

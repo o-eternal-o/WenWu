@@ -7,6 +7,7 @@
   <title>文物展厅管理系统</title>
   <!-- Bootstrap 5 -->
   <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
   <!-- 自定义样式 -->
   <style>
     .admin-container {
@@ -49,3 +50,4 @@
   </style>
 </head>
 <body>
+

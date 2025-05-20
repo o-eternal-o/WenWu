@@ -97,4 +97,4 @@
 </div>
 
 <!-- 引入公用尾部 -->
-<jsp:include page="footer.jsp"/>
+<%@ include file="footer.jsp" %>

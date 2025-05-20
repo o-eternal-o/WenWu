@@ -4,7 +4,7 @@ import java.sql.*;
 
 public class DatabaseConnector {
     // 数据库连接配置
-    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/cultural_exhibition_db";
+    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/cultural_exhibition_db?useUnicode=true&characterEncoding=UTF-8";
     private static final String JDBC_USER = "root";  // 替换为你的数据库用户名
     private static final String JDBC_PASSWORD = "2525";  // 替换为你的数据库密码
 
