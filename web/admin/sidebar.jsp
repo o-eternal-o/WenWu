@@ -31,6 +31,10 @@
       <i class="bi bi-calendar-check me-2"></i>
       预约管理
     </a>
+    <a class="nav-link" href="${pageContext.request.contextPath}/UserVerificationServlet?action=list">
+      <i class="bi bi-person-check me-2"></i>
+      用户实名认证管理
+    </a>
     <a class="nav-link" href="${pageContext.request.contextPath}/index.html">
       <i class="bi bi-box-arrow-right me-2"></i>
       退出登录
