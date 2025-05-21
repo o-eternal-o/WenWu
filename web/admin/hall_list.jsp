@@ -28,16 +28,29 @@
     <!-- 展厅搜索、新增 -->
     <div class="card mb-4">
         <div class="card-body py-2 d-flex justify-content-between align-items-center">
-            <form class="d-flex gap-2" style="flex: 1; max-width: 60%;">
-                <input type="text" class="form-control form-control-sm" placeholder="展厅名称/位置" style="flex: 1;">
-                <button class="btn btn-sm btn-primary">搜索</button>
+
+            <form id="searchForm" action="${pageContext.request.contextPath}/HallServlet" method="post" class="d-flex gap-2" style="flex: 1; max-width: 60%;">
+                <!-- 隐藏字段：action -->
+                <input type="hidden" name="action" value="search">
+
+                <!-- 下拉菜单 -->
+                <select id="searchType" name="searchType" class="form-select form-select-sm" style="width: auto;">
+                    <option value="hall_name">名称</option>
+                    <option value="dynasty">所属朝代</option>
+                    <option value="type">文物类型</option>
+                </select>
+
+                <!-- 输入框 -->
+                <input id="searchInput" name="searchInput" type="text" class="form-control form-control-sm" placeholder="请输入查询内容" style="flex: 1;">
+
+                <!-- 搜索按钮 -->
+                <button id="searchButton" type="submit" class="btn btn-sm btn-primary">搜索</button>
             </form>
-            <!-- 查看当前所有展厅按钮 -->
-            <a href="${pageContext.request.contextPath}/HallServlet?action=list" class="btn btn-sm btn-success d-flex align-items-center"
-               style="white-space: nowrap;">查看当前所有展厅</a>
+
             <!-- 新增展厅按钮 -->
             <a href="${pageContext.request.contextPath}/admin/function/hall_edit.jsp" class="btn btn-sm btn-success d-flex align-items-center"
                style="white-space: nowrap;">新增展厅</a>
+
         </div>
     </div>
 
@@ -47,7 +60,7 @@
             <table id="hallTable" class="table table-hover">
             <thead class="table-dark">
                 <tr>
-                    <th>展厅ID</th>
+<%--                    <th>展厅ID</th>--%>
                     <th>展厅名称</th>
                     <th>所属朝代</th>
                     <th>文物类型</th>
@@ -65,7 +78,7 @@
                 <c:forEach var="hall" items="${requestScope.hallList}">
                     <tr>
                         <!-- 展厅 ID -->
-                        <td>${hall.hallId}</td>
+<%--                        <td>${hall.hallId}</td>--%>
                         <!-- 展厅名称 -->
                         <td>${hall.hallName}</td>
                         <!-- 所属朝代 -->
@@ -102,28 +115,40 @@
                 </tbody>
             </table>
         </div>
-
-        <script>
-            function confirmDelete(hallId) {
-                if (confirm("确定要删除该展厅吗？")) {
-                    fetch('HallServlet?action=delete&hallId=' + hallId, {
-                        method: 'POST'
-                    })
-                        .then(response => response.text()) // 解析纯文本响应
-                        .then(data => {
-                            if (data === "success") {
-                                alert("删除成功！");
-                                location.reload(); // 刷新页面以更新展厅列表
-                            } else {
-                                alert("删除失败，请稍后再试！");
-                            }
-                        })
-                        .catch(error => {
-                            console.error("删除请求出错:", error);
-                            alert("删除请求出错，请检查网络连接！");
-                        });
-                }
-            }
-        </script>
+    </div>
+</div>
 
 <%@ include file="footer.jsp" %>
+
+<%--删除反馈--%>
+<script>
+    function confirmDelete(hallId) {
+        if (confirm("确定要删除该展厅吗？")) {
+            fetch('HallServlet?action=delete&hallId=' + hallId, {
+                        method: 'POST'
+            })
+                .then(response => response.text()) // 解析纯文本响应
+                .then(data => {
+                    if (data === "success") {
+                        alert("删除成功！");
+                        location.reload(); // 刷新页面以更新展厅列表
+                    } else {
+                        alert("删除失败，请稍后再试！");
+                    }
+                })
+                .catch(error => {
+                    console.error("删除请求出错:", error);
+                    alert("删除请求出错，请检查网络连接！");
+                });
+        }
+    }
+</script>
+<%--处理反回--%>
+<script>
+    window.onload = function() {
+        if (window.name === "refresh") {
+            window.name = ""; // 清除标记
+            location.reload();
+        }
+    };
+</script>

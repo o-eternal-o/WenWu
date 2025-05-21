@@ -35,6 +35,33 @@ public class HallDAO {
     }
 
     /**
+     * 查询特定展厅信息
+     */
+    public List<Hall_Bean> searchHalls(String searchType, String searchInput) throws Exception {
+        List<Hall_Bean> halls = new ArrayList<>();
+        // 使用占位符 ? 构建 SQL 查询，避免 SQL 注入
+        String query = "SELECT * FROM halls WHERE " + searchType + " LIKE ?";
+        // 在参数中添加通配符
+        String param = "%" + searchInput + "%";
+        ResultSet rs = dbConnector.executeQuery(query, param);
+
+        while (rs.next()) {
+            Hall_Bean hall = new Hall_Bean();
+            hall.setHallId(rs.getInt("hall_id"));
+            hall.setHallName(rs.getString("hall_name"));
+            hall.setDynasty(rs.getString("dynasty"));
+            hall.setType(rs.getString("type"));
+            hall.setLayoutRules(rs.getString("layout_rules"));
+            hall.setOpenBooking(rs.getBoolean("is_open_booking"));
+            hall.setBookingStartTime(rs.getString("booking_start_time"));
+            hall.setBookingEndTime(rs.getString("booking_end_time"));
+            hall.setMaxCapacity(rs.getInt("max_capacity"));
+            halls.add(hall);
+        }
+        return halls;
+    }
+
+    /**
      * 添加展厅信息
      */
     public void addHall(Hall_Bean hall) throws Exception {
@@ -54,11 +81,11 @@ public class HallDAO {
      * 获取单个展厅信息
      */
     public Hall_Bean getHallById(int hallId) throws Exception {
-        String query = "SELECT * FROM halls WHERE hall_id = ?";  // 修改为 "hall_id"
+        String query = "SELECT * FROM halls WHERE hall_id = ?";
         ResultSet rs = dbConnector.executeQuery(query, hallId);
         if (rs.next()) {
             Hall_Bean hall = new Hall_Bean();
-            hall.setHallId(rs.getInt("hall_id"));  // 修改为 "hall_id"
+            hall.setHallId(rs.getInt("hall_id"));
             hall.setHallName(rs.getString("hall_name"));
             hall.setDynasty(rs.getString("dynasty"));
             hall.setType(rs.getString("type"));
@@ -87,7 +114,6 @@ public class HallDAO {
                 hall.getBookingEndTime(),
                 hall.getMaxCapacity(),
                 hall.getHallId());
-        System.out.println("HallDAO"+hall.isOpenBooking());
     }
 
     /**

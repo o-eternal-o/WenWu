@@ -13,7 +13,7 @@ import java.util.Enumeration;
 import java.util.List;
 
 @WebServlet("/HallServlet")
-public class HallServlet extends HttpServlet {
+public class relicServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private HallDAO hallDAO = new HallDAO();
 
