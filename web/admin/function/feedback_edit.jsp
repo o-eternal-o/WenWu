@@ -4,57 +4,45 @@
 <%@ include file="../sidebar.jsp" %>
 
 <div class="main-content py-4">
-    <h3 class="mb-4 text-center">${empty relic.relicId ? '新增文物' : '编辑文物'}</h3>
-
-    <form id="relicForm" method="post">
-        <input type="hidden" name="action" value="${empty relic.relicId ? 'add' : 'update'}">
-        <c:if test="${not empty relic.relicId}">
-            <input type="hidden" name="relicId" value="${relic.relicId}">
+    <h3 class="mb-4 text-center">${empty feedback.feedbackId ? '新增反馈' : '编辑反馈'}</h3>
+    <form id="feedbackForm" method="post">
+        <input type="hidden" name="action" value="${empty feedback.feedbackId ? 'add' : 'update'}">
+        <c:if test="${not empty feedback.feedbackId}">
+            <input type="hidden" name="feedbackId" value="${feedback.feedbackId}">
         </c:if>
-
         <div class="row g-3">
             <div class="col-md-6">
-                <label class="form-label" for="relicName">文物名称<span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="relicName" name="relicName"
-                       value="${relic.relicName}" required>
+                <label class="form-label" for="userId">用户ID<span class="text-danger">*</span></label>
+                <input type="number" class="form-control" id="userId" name="userId"
+                       value="${feedback.userId}" required>
             </div>
-
             <div class="col-md-6">
-                <label class="form-label" for="dynasty">所属朝代</label>
-                <input type="text" class="form-control" id="dynasty" name="dynasty"
-                       value="${relic.dynasty}">
+                <label class="form-label" for="relicId">文物ID</label>
+                <input type="number" class="form-control" id="relicId" name="relicId"
+                       value="${feedback.relicId}">
             </div>
-
+            <div class="col-12">
+                <label class="form-label" for="content">反馈内容<span class="text-danger">*</span></label>
+                <textarea class="form-control" id="content" name="content" rows="3" required>${feedback.content}</textarea>
+            </div>
             <div class="col-md-6">
-                <label class="form-label" for="hallId">展厅ID<span class="text-danger">*</span></label>
-                <input type="number" class="form-control" id="hallId" name="hallId"
-                       value="${relic.hallId}" required>
+                <label class="form-label" for="status">状态</label>
+                <select class="form-select" id="status" name="status">
+                    <option value="submitted" ${feedback.status == 'submitted' ? 'selected' : ''}>已提交</option>
+                    <option value="processing" ${feedback.status == 'processing' ? 'selected' : ''}>处理中</option>
+                    <option value="resolved" ${feedback.status == 'resolved' ? 'selected' : ''}>已解决</option>
+                </select>
             </div>
-
-            <div class="col-md-6">
-                <label class="form-label" for="imagePath">图片路径</label>
-                <input type="text" class="form-control" id="imagePath" name="imagePath"
-                       value="${relic.imagePath}">
-            </div>
-
-            <div class="col-md-6">
-                <label class="form-label" for="createdBy">创建人ID</label>
-                <input type="number" class="form-control" id="createdBy" name="createdBy"
-                       value="${relic.createdBy}">
-            </div>
-
             <div class="col-md-6">
                 <label class="form-label" for="createdAt">创建时间</label>
                 <input type="text" class="form-control" id="createdAt" name="createdAt"
-                       value="${relic.createdAt}" placeholder="yyyy-MM-dd HH:mm:ss">
+                       value="${feedback.createdAt}" placeholder="yyyy-MM-dd HH:mm:ss">
             </div>
-
             <div class="col-12">
-                <label class="form-label" for="description">描述</label>
-                <textarea class="form-control" id="description" name="description" rows="4">${relic.description}</textarea>
+                <label class="form-label" for="resolvedResult">处理结果</label>
+                <textarea class="form-control" id="resolvedResult" name="resolvedResult" rows="2">${feedback.resolvedResult}</textarea>
             </div>
         </div>
-
         <div class="mt-4 d-flex justify-content-between">
             <button type="submit" class="btn btn-primary">保存</button>
             <button type="button" class="btn btn-secondary" onclick="goBack()">返回</button>
@@ -71,14 +59,13 @@
             window.name = "refresh";
             history.back();
         } else {
-            window.location = '${pageContext.request.contextPath}/admin/admin.jsp';
+            window.location = '${pageContext.request.contextPath}/admin/feedback_list.jsp';
         }
     }
 
     document.addEventListener("DOMContentLoaded", function() {
-        document.getElementById("relicForm").addEventListener("submit", function(event) {
+        document.getElementById("feedbackForm").addEventListener("submit", function(event) {
             event.preventDefault();
-
             const formElements = this.elements;
             const formData = {};
             for (let element of formElements) {
@@ -86,9 +73,9 @@
                     formData[element.name] = element.value;
                 }
             }
-            const relicId = document.querySelector("input[name='relicId']")?.value;
-            const action = relicId ? 'update' : 'add';
-            const url = `${pageContext.request.contextPath}/RelicServlet?action=` + action;
+            const feedbackId = document.querySelector("input[name='feedbackId']")?.value;
+            const action = feedbackId ? 'update' : 'add';
+            const url = `${pageContext.request.contextPath}/FeedbackServlet?action=` + action;
 
             const xhr = new XMLHttpRequest();
             xhr.open("POST", url, true);
@@ -98,7 +85,7 @@
                     if (xhr.status === 200) {
                         if (xhr.responseText === "success") {
                             alert("保存成功！");
-                            window.location = '${pageContext.request.contextPath}/admin/relic_list.jsp';
+                            window.location = '${pageContext.request.contextPath}/FeedbackServlet?action=list';
                         } else {
                             alert("保存失败，请稍后再试！");
                         }

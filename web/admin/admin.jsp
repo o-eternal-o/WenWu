@@ -56,7 +56,7 @@
                 <i class="bi bi-upload"></i>
                 录入文物
               </a>
-              <a href="${pageContext.request.contextPath}/admin/function/new_edit.jsp" class="btn btn-info">
+              <a href="${pageContext.request.contextPath}/admin/function/news_edit.jsp" class="btn btn-info">
                 <i class="bi bi-megaphone"></i>
                 发布新闻
               </a>
