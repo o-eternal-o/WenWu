@@ -28,7 +28,6 @@
                 <input type="hidden" name="action" value="search">
                 <select id="searchType" name="searchType" class="form-select form-select-sm" style="width: auto;">
                     <option value="username">用户名</option>
-                    <option value="phone">手机号</option>
                     <option value="role">角色</option>
                 </select>
                 <input id="searchInput" name="searchInput" type="text" class="form-control form-control-sm" placeholder="请输入查询内容" style="flex: 1;">
@@ -43,9 +42,7 @@
                 <thead class="table-dark">
                     <tr>
                         <th>用户名</th>
-                        <th>手机号</th>
                         <th>角色</th>
-                        <th>实名</th>
                         <th>实名状态</th>
                         <th>创建时间</th>
                         <th>操作</th>
@@ -58,9 +55,7 @@
                 <c:forEach var="user" items="${requestScope.userList}">
                     <tr>
                         <td>${user.username}</td>
-                        <td>${user.phone}</td>
                         <td>${user.role}</td>
-                        <td>${user.realName}</td>
                         <td>
                             <c:choose>
                                 <c:when test="${user.realNameVerified}">

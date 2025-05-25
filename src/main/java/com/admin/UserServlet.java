@@ -102,9 +102,7 @@ public class UserServlet extends HttpServlet {
         User_Bean user = new User_Bean();
         user.setUsername(username);
         user.setPassword(password);
-        user.setPhone(phone);
         user.setRole(role);
-        user.setRealName(realName);
         user.setRealNameVerified(realNameVerified);
         user.setCreatedAt(createdAt);
 
@@ -131,9 +129,7 @@ public class UserServlet extends HttpServlet {
         user.setUserId(userId);
         user.setUsername(username);
         user.setPassword(password);
-        user.setPhone(phone);
         user.setRole(role);
-        user.setRealName(realName);
         user.setRealNameVerified(realNameVerified);
         user.setCreatedAt(createdAt);
 

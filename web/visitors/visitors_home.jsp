@@ -641,7 +641,7 @@
         <div class="user-info">
             <h1 class="username">游客用户</h1>
             <span class="user-role">游客</span>
-            <p>注册时间: 2023-10-15 | 上次登录: 2023-11-15 09:20</p>
+            <p>注册时间: 2023-10-15</p>
 
             <div class="user-stats">
                 <div class="stat-item">
@@ -803,7 +803,7 @@
     function goToAuth() {
         const authStatus = document.getElementById('auth-status');
         if (authStatus.classList.contains('auth-no')) {
-            window.location.href = 'auth-verify.html';
+            window.location.href = '${pageContext.request.contextPath}/identityVerificationServlet';
         }
     }
 

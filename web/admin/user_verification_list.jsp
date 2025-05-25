@@ -45,7 +45,7 @@
                     <th>ID</th>
                     <th>用户ID</th>
                     <th>真实姓名</th>
-                    <th>证件类型</th>
+                    <th>联系电话</th>
                     <th>证件号码</th>
                     <th>状态</th>
                     <th>提交时间</th>
@@ -61,7 +61,7 @@
                         <td>${v.verificationId}</td>
                         <td>${v.userId}</td>
                         <td>${v.realName}</td>
-                        <td>${v.idType}</td>
+                        <td>${v.phone}</td>
                         <td>${v.idNumber}</td>
                         <td>${v.status}</td>
                         <td>${v.submittedAt}</td>
@@ -79,6 +79,7 @@
         </div>
     </div>
 </div>
+
 
 <%@ include file="footer.jsp" %>
 <script>

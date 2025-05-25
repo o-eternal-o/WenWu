@@ -22,16 +22,19 @@
                        value="${verification.realName}" required>
             </div>
             <div class="col-md-6">
-                <label class="form-label" for="idType">证件类型</label>
-                <select class="form-select" id="idType" name="idType">
-                    <option value="ID_CARD" ${verification.idType == 'ID_CARD' ? 'selected' : ''}>身份证</option>
-                    <option value="PASSPORT" ${verification.idType == 'PASSPORT' ? 'selected' : ''}>护照</option>
-                </select>
+                <label class="form-label" for="phone">联系电话<span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="phone" name="phone"
+                       value="${verification.phone}" required>
             </div>
             <div class="col-md-6">
                 <label class="form-label" for="idNumber">证件号码<span class="text-danger">*</span></label>
                 <input type="text" class="form-control" id="idNumber" name="idNumber"
                        value="${verification.idNumber}" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="idImagePath">证件图片地址</label>
+                <input type="text" class="form-control" id="idImagePath" name="idImagePath"
+                       value="${verification.idImagePath}">
             </div>
             <div class="col-md-6">
                 <label class="form-label" for="status">状态</label>

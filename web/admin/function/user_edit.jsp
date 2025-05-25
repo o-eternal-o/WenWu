@@ -22,21 +22,11 @@
                        value="${user.password}" required>
             </div>
             <div class="col-md-6">
-                <label class="form-label" for="phone">手机号</label>
-                <input type="text" class="form-control" id="phone" name="phone"
-                       value="${user.phone}">
-            </div>
-            <div class="col-md-6">
                 <label class="form-label" for="role">角色</label>
                 <select class="form-select" id="role" name="role">
                     <option value="admin" ${user.role == 'admin' ? 'selected' : ''}>管理员</option>
                     <option value="visitor" ${user.role == 'visitor' ? 'selected' : ''}>访客</option>
                 </select>
-            </div>
-            <div class="col-md-6">
-                <label class="form-label" for="realName">实名</label>
-                <input type="text" class="form-control" id="realName" name="realName"
-                       value="${user.realName}">
             </div>
             <div class="col-md-6">
                 <label class="form-label" for="realNameVerified">实名状态</label>

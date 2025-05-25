@@ -105,8 +105,9 @@ public class UserVerificationServlet extends HttpServlet {
         UserVerification_Bean bean = new UserVerification_Bean();
         bean.setUserId(Integer.parseInt(request.getParameter("userId")));
         bean.setRealName(request.getParameter("realName"));
-        bean.setIdType(request.getParameter("idType"));
+        bean.setPhone(request.getParameter("phone")); // 新增
         bean.setIdNumber(request.getParameter("idNumber"));
+        bean.setIdImagePath(request.getParameter("idImagePath"));
         bean.setStatus(request.getParameter("status"));
         String submittedAt = request.getParameter("submittedAt");
         bean.setSubmittedAt(submittedAt == null || submittedAt.isEmpty() ? null : Timestamp.valueOf(submittedAt));

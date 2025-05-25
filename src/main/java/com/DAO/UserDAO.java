@@ -19,9 +19,7 @@ public class UserDAO {
             user.setUserId(rs.getInt("user_id"));
             user.setUsername(rs.getString("username"));
             user.setPassword(rs.getString("password"));
-            user.setPhone(rs.getString("phone"));
             user.setRole(rs.getString("role"));
-            user.setRealName(rs.getString("real_name"));
             user.setRealNameVerified(rs.getBoolean("real_name_verified"));
             user.setCreatedAt(rs.getString("created_at"));
             users.add(user);
@@ -39,9 +37,7 @@ public class UserDAO {
             user.setUserId(rs.getInt("user_id"));
             user.setUsername(rs.getString("username"));
             user.setPassword(rs.getString("password"));
-            user.setPhone(rs.getString("phone"));
             user.setRole(rs.getString("role"));
-            user.setRealName(rs.getString("real_name"));
             user.setRealNameVerified(rs.getBoolean("real_name_verified"));
             user.setCreatedAt(rs.getString("created_at"));
             users.add(user);
@@ -50,13 +46,11 @@ public class UserDAO {
     }
 
     public void addUser(User_Bean user) throws Exception {
-        String query = "INSERT INTO user (username, password, phone, role, real_name, real_name_verified, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO user (username, password, role, real_name_verified, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)";
         dbConnector.executeUpdate(query,
                 user.getUsername(),
                 user.getPassword(),
-                user.getPhone(),
                 user.getRole(),
-                user.getRealName(),
                 user.isRealNameVerified(),
                 user.getCreatedAt());
     }
@@ -69,9 +63,7 @@ public class UserDAO {
             user.setUserId(rs.getInt("user_id"));
             user.setUsername(rs.getString("username"));
             user.setPassword(rs.getString("password"));
-            user.setPhone(rs.getString("phone"));
             user.setRole(rs.getString("role"));
-            user.setRealName(rs.getString("real_name"));
             user.setRealNameVerified(rs.getBoolean("real_name_verified"));
             user.setCreatedAt(rs.getString("created_at"));
             return user;
@@ -80,13 +72,11 @@ public class UserDAO {
     }
 
     public void updateUser(User_Bean user) throws Exception {
-        String query = "UPDATE user SET username = ?, password = ?, phone = ?, role = ?, real_name = ?, real_name_verified = ?, created_at = ? WHERE user_id = ?";
+        String query = "UPDATE user SET username = ?, password = ?, role = ?, real_name_verified = ?, created_at = ? WHERE user_id = ?";
         dbConnector.executeUpdate(query,
                 user.getUsername(),
                 user.getPassword(),
-                user.getPhone(),
                 user.getRole(),
-                user.getRealName(),
                 user.isRealNameVerified(),
                 user.getCreatedAt(),
                 user.getUserId());
