@@ -43,7 +43,7 @@ public class LoginServlet extends HttpServlet {
                 if ("admin".equalsIgnoreCase(role)) {
                     response.sendRedirect(request.getContextPath() + "/AdminServlet"); // 管理员
                 } else {
-                    response.sendRedirect(request.getContextPath() + "/visitors.jsp"); // 普通用户页面
+                    response.sendRedirect(request.getContextPath() + "/VisitorsServlet"); // 普通用户页面
                 }
             } else {
                 // 用户信息获取失败

@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -615,10 +616,6 @@
             </button>
             <div class="nav-links">
                 <a href="../visitors.jsp" class="nav-link">首页</a>
-                <a href="#" class="nav-link">参观导览</a>
-                <a href="#" class="nav-link">数字文物</a>
-                <a href="#" class="nav-link">特展在线</a>
-                <a href="relic-detail.html" class="nav-link">展厅预约</a>
             </div>
         </div>
 
@@ -635,21 +632,20 @@
 </nav>
 
 <div class="container">
-    <!-- 用户信息头部 (固定显示) -->
+    <!-- 用户信息头部 -->
     <div class="profile-header">
-        <div class="avatar">游</div>
+        <div class="avatar">${user.username != null ? user.username.substring(0,1) : '游'}</div>
         <div class="user-info">
-            <h1 class="username">游客用户</h1>
+            <h1 class="username">${user.username}</h1>
             <span class="user-role">游客</span>
-            <p>注册时间: 2023-10-15</p>
-
+            <p>注册时间: ${user.createdAt}</p>
             <div class="user-stats">
                 <div class="stat-item">
-                    <div class="stat-value">3</div>
+                    <div class="stat-value">${bookingCount}</div>
                     <div class="stat-label">预约记录</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value">1</div>
+                    <div class="stat-value">${feedbackCount}</div>
                     <div class="stat-label">反馈记录</div>
                 </div>
             </div>
@@ -663,32 +659,34 @@
         <div class="nav-item" data-section="settings">个人信息</div>
     </div>
 
-    <!-- 我的预约内容区 -->
-    <div id="booking-section" class="content-section active">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h2 class="section-title">我的预约</h2>
-            <a href="#" class="btn">新建预约</a>
-        </div>
-
-        <div class="booking-list">
-            <div class="booking-item">
-                <div class="booking-hall">唐代文物展厅</div>
-                <div class="booking-time">2023-11-18 14:00 - 16:00</div>
-                <div class="booking-status status-confirmed">已确认</div>
-            </div>
-
-            <div class="booking-item">
-                <div class="booking-hall">青铜器专题展</div>
-                <div class="booking-time">2023-11-25 10:00 - 12:00</div>
-                <div class="booking-status status-pending">待确认</div>
-            </div>
-
-            <div class="empty-tip" style="display: none;">
-                <p>您还没有任何预约记录</p>
-                <a href="#" class="btn btn-outline">立即预约</a>
-            </div>
-        </div>
-    </div>
+   <!-- 我的预约内容区 -->
+   <div id="booking-section" class="content-section active">
+       <div class="booking-list">
+           <c:choose>
+               <c:when test="${not empty bookingList}">
+                   <c:forEach var="b" items="${bookingList}">
+                       <div class="booking-item">
+                           <div class="booking-hall">${b.hallId}</div>
+                           <div class="booking-time">${b.bookingTime}</div>
+                           <div class="booking-status
+                               <c:choose>
+                                   <c:when test="${b.status eq '已确认'}"> status-confirmed</c:when>
+                                   <c:when test="${b.status eq '待确认'}"> status-pending</c:when>
+                                   <c:when test="${b.status eq '已取消'}"> status-canceled</c:when>
+                               </c:choose>
+                           ">${b.status}</div>
+                       </div>
+                   </c:forEach>
+               </c:when>
+               <c:otherwise>
+                   <div class="empty-tip">
+                       <p>您还没有任何预约记录</p>
+                       <a href="${pageContext.request.contextPath}/bookingServlet" class="btn btn-outline">立即预约</a>
+                   </div>
+               </c:otherwise>
+           </c:choose>
+       </div>
+   </div>
 
     <!-- 我的反馈内容区 -->
     <div id="feedback-section" class="content-section">
@@ -696,59 +694,64 @@
             <h2 class="section-title">我的反馈</h2>
             <a href="#" class="btn">提交反馈</a>
         </div>
-
         <div class="feedback-list">
-            <div class="feedback-item">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                    <strong>关于唐代文物展厅的反馈</strong>
-                    <span style="color: var(--gold);">处理中</span>
-                </div>
-                <p style="margin-bottom: 10px;">展厅内的部分文物说明牌有错别字，希望能更正。</p>
-                <div style="font-size: 12px; color: #999;">提交时间: 2023-11-10 15:30</div>
-            </div>
-
-            <div class="empty-tip" style="display: none;">
-                <p>您还没有提交过任何反馈</p>
-                <a href="#" class="btn btn-outline">提交反馈</a>
-            </div>
+            <c:choose>
+                <c:when test="${not empty feedbackList}">
+                    <c:forEach var="f" items="${feedbackList}">
+                        <div class="feedback-item">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <strong>反馈ID: ${f.feedbackId}</strong>
+                                <span style="color: var(--gold);">
+                                    <c:choose>
+                                        <c:when test="${f.status eq '处理中'}">处理中</c:when>
+                                        <c:when test="${f.status eq '已解决'}">已解决</c:when>
+                                        <c:otherwise>未处理</c:otherwise>
+                                    </c:choose>
+                                </span>
+                            </div>
+                            <p style="margin-bottom: 10px;">${f.content}</p>
+                            <div class="feedback-time">提交时间: ${f.createdAt}</div>
+                            <c:if test="${not empty f.resolvedResult}">
+                                <div style="margin-top:8px;color:#52c41a;">处理结果：${f.resolvedResult}</div>
+                            </c:if>
+                        </div>
+                    </c:forEach>
+                </c:when>
+                <c:otherwise>
+                    <div class="empty-tip">
+                        <p>您还没有提交过任何反馈</p>
+                        <a href="#" class="btn btn-outline">提交反馈</a>
+                    </div>
+                </c:otherwise>
+            </c:choose>
         </div>
     </div>
 
     <!-- 个人信息内容区 -->
     <div id="settings-section" class="content-section">
         <h2 class="section-title">个人信息</h2>
-
         <div class="settings-form">
             <div class="form-group">
                 <label>用户名</label>
-                <input type="text" value="visitor123" readonly>
+                <input type="text" value="${user.username}" readonly>
             </div>
-
             <div class="form-group">
                 <label>真实姓名</label>
                 <div style="display: flex; align-items: center;">
-                    <input type="text" value="李四" style="flex: 1;">
-                    <span id="auth-status" class="auth-badge auth-no" onclick="goToAuth()">未认证</span>
+                    <input type="text" value="${verification != null ? verification.realName : ''}" readonly>
+                    <span id="auth-status" class="auth-badge ${user.realNameVerified ? 'auth-yes' : 'auth-no'}"
+                          ${user.realNameVerified ? '' : 'onclick="goToAuth()"'} >
+                        ${user.realNameVerified ? '已认证' : '未认证'}
+                    </span>
                 </div>
             </div>
-
             <div class="form-group">
                 <label>联系电话</label>
-                <input type="tel" value="13912345678">
-            </div>
-
-            <div class="form-group">
-                <label>电子邮箱</label>
-                <input type="email" value="visitor123@example.com">
-            </div>
-
-            <div style="text-align: center; margin-top: 30px;">
-                <button class="btn" style="margin-right: 15px;">保存更改</button>
-                <button class="btn btn-outline">取消</button>
+                <input type="tel" value="${verification != null ? verification.phone : ''}" readonly>
             </div>
         </div>
     </div>
-</div>
+
 
 <script>
     // 菜单切换

@@ -1,10 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>数字文物展厅系统 - 用户中心</title>
+    <title>数字文物展厅系统 - 用户</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
@@ -109,13 +110,6 @@
             max-width: 600px;
             margin: 0 20px;
             position: relative;
-        }
-
-        /* 搜索功能 */
-        .search-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .search-toggle {
@@ -342,6 +336,41 @@
             color: #555;
         }
     </style>
+    <%--新闻样式--%>
+    <style>
+        .news-section {
+            margin: 50px 5% 0 5%;
+            background: #fff8f0;
+            border-radius: 10px;
+            border: 2px solid var(--gold);
+            padding: 30px 30px 10px 30px;
+            box-shadow: 0 2px 12px rgba(200,168,106,0.08);
+        }
+        .news-list {
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+        }
+        .news-item {
+            border-bottom: 1px solid #e5d3b3;
+            padding-bottom: 12px;
+        }
+        .news-title {
+            color: var(--primary-red);
+            font-size: 1.2em;
+            margin-bottom: 4px;
+        }
+        .news-meta {
+            color: var(--gold);
+            font-size: 0.95em;
+            margin-bottom: 6px;
+        }
+        .news-content {
+            color: #444;
+            font-size: 1em;
+            line-height: 1.6;
+        }
+    </style>
 </head>
 <body>
 <!-- 修改后的导航栏结构 -->
@@ -354,32 +383,31 @@
                 <i class="fas fa-bars"></i>
             </button>
             <div class="nav-links">
-                <a href="#" class="nav-link">参观导览</a>
-                <a href="#" class="nav-link">数字文物</a>
-                <a href="#" class="nav-link">特展在线</a>
-                <a href="#" class="nav-link">文创精品</a>
-                <a href="relic-detail.html" class="nav-link">展厅预约</a>
+                <a href="${pageContext.request.contextPath}/visitors/hallList" class="nav-link">文物展厅</a>
+                <a href="${pageContext.request.contextPath}/visitors/relicList" class="nav-link">文物</a>
+                <a href="${pageContext.request.contextPath}/bookingServlet" class="nav-link">展厅预约</a>
             </div>
         </div>
 
         <!-- 中间：搜索框 -->
-        <div class="nav-center">
-            <div class="search-wrapper">
-                <button class="search-toggle" onclick="toggleSearch()">
-                    <i class="fas fa-search"></i>
-                </button>
-                <div class="search-box">
-                    <input type="text" class="search-input" placeholder="输入文物名称或朝代...">
-                </div>
-            </div>
-        </div>
+       <form class="search-bar" action="${pageContext.request.contextPath}/visitors/relicList" method="get" style="margin:0;max-width:600px;">
+           <select name="searchType" style="padding:8px 14px;border-radius:16px;border:1.5px solid var(--gold);font-size:1em;">
+               <option value="relic_name">文物名称</option>
+               <option value="dynasty">所属朝代</option>
+               <option value="description">描述</option>
+           </select>
+           <input type="text" name="searchInput" placeholder="请输入查询内容" style="padding:8px 14px;border-radius:16px;border:1.5px solid var(--gold);font-size:1em;">
+           <button type="submit" style="padding:8px 24px;border-radius:16px;border:none;background:var(--primary-red);color:#fff;font-size:1em;font-weight:bold;cursor:pointer;">
+               <i class="fas fa-search"></i> 搜索
+           </button>
+       </form>
 
         <!-- 右侧：用户信息 -->
         <div class="nav-right">
             <div class="user-profile" onclick="toggleUserDropdown()">
                 <span class="user-name">${not empty sessionScope.username ? sessionScope.username : '游客用户'}</span>
                 <div class="user-dropdown">
-                    <a href="${pageContext.request.contextPath}/visitors/visitors_home.jsp"><i class="fas fa-user"></i> 个人中心</a>
+                    <a href="${pageContext.request.contextPath}/visitors/home"><i class="fas fa-user"></i> 个人中心</a>
                     <a href="${pageContext.request.contextPath}/index.html" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> 退出登录</a>
                 </div>
             </div>
@@ -397,22 +425,9 @@
     </div>
 </div>
 
-<!-- 用户欢迎信息 -->
-<div class="user-welcome">
-    <h2>欢迎回来，游客用户</h2>
-    <p>您有2个即将到来的预约，3件收藏的文物</p>
-</div>
-
 <!-- 核心内容 -->
 <div class="title-plaque">
     <h2>紫禁城六百年</h2>
-</div>
-
-<div class="quick-access">
-    <div class="access-card">
-        <i class="fas fa-university"></i>
-        <h3>虚拟游览</h3>
-    </div>
 </div>
 
 <div class="divider"></div>
@@ -436,6 +451,23 @@
             <h3>青花缠枝莲纹瓶</h3>
             <p>明·永乐年间</p>
         </div>
+    </div>
+</div>
+
+<!-- 新闻动态模块 -->
+<div class="news-section">
+    <h2 class="section-title">新闻动态</h2>
+    <div class="news-list">
+        <c:forEach var="news" items="${newsList}">
+            <div class="news-item">
+                <h3 class="news-title">${news.title}</h3>
+                <div class="news-meta">${news.publishTime}</div>
+                <div class="news-content">${news.content}</div>
+            </div>
+        </c:forEach>
+        <c:if test="${empty newsList}">
+            <div style="color:#888;text-align:center;">暂无新闻</div>
+        </c:if>
     </div>
 </div>
 
