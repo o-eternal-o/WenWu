@@ -750,6 +750,9 @@
                 <input type="tel" value="${verification != null ? verification.phone : ''}" readonly>
             </div>
         </div>
+        <div class="form-actions">
+            <a href="${pageContext.request.contextPath}/visitors/edit_profile.jsp" class="btn">修改信息</a>
+        </div>
     </div>
 
 

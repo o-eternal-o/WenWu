@@ -184,7 +184,7 @@
             <c:forEach var="relic" items="${relics}">
                 <div class="relic-card">
                     <div class="relic-image">
-                        <img src="${empty relic.imagePath ? '/assets/img/default_relic.jpg' : relic.imagePath}" alt="${relic.relicName}">
+                        <img src="${pageContext.request.contextPath}${empty relic.imagePath ? 'assets/img/error.png' :relic.imagePath}" alt="${relic.relicName}">
                     </div>
                     <div class="relic-content">
                         <h3 class="relic-name">${relic.relicName}</h3>
@@ -192,6 +192,7 @@
                             <span>${relic.dynasty}</span>
                         </div>
                         <p class="relic-description">${relic.description}</p>
+                        <a href="${pageContext.request.contextPath}/visitors/OneRelic?relicId=${relic.relicId}" class="relic-link" style="color: var(--primary-red); font-weight: bold; text-decoration: none;">查看详情</a>
                     </div>
                 </div>
             </c:forEach>

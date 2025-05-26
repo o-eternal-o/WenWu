@@ -356,7 +356,7 @@
                         </div>
                     </div>
                     <p class="hall-description">${hall.layoutRules}</p>
-                    <a href="#" class="view-button" data-id="${hall.hallId}">查看详情</a>
+                    <a href="<c:url value='/visitors/OneHall'/>?hallId=${hall.hallId}" class="view-button">查看详情</a>
                 </div>
             </div>
         </c:forEach>
@@ -378,31 +378,6 @@
                 }
             });
         });
-    });
-
-    // 展厅详情弹窗
-    document.querySelectorAll('.view-button').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            const card = this.closest('.hall-card');
-            const name = card.querySelector('.hall-name').innerText;
-            const dynasty = card.querySelector('.meta-item span').innerText;
-            const desc = card.querySelector('.hall-description').innerText;
-            const modal = document.getElementById('hallModal');
-            modal.querySelector('.modal-content').innerHTML = `
-                <div class="close-modal" id="closeModal">&times;</div>
-                <h2>${name}</h2>
-                <img src="/assets/img/error.jpg" style="width:100%;max-height:300px;object-fit:cover;margin-bottom:20px;">
-                <p><b>朝代：</b>${dynasty}</p>
-                <p>${desc}</p>
-            `;
-            modal.classList.add('active');
-            document.getElementById('closeModal').onclick = () => modal.classList.remove('active');
-        });
-    });
-    // 关闭弹窗
-    document.getElementById('hallModal').addEventListener('click', function(e) {
-        if (e.target === this) this.classList.remove('active');
     });
 </script>
 </body>

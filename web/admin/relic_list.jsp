@@ -49,7 +49,6 @@
                     <tr>
                         <th>文物名称</th>
                         <th>所属朝代</th>
-                        <th>描述</th>
                         <th>展厅ID</th>
                         <th>图片路径</th>
                         <th>创建人</th>
@@ -65,7 +64,6 @@
                     <tr>
                         <td>${relic.relicName}</td>
                         <td>${relic.dynasty}</td>
-                        <td>${relic.description}</td>
                         <td>${relic.hallId}</td>
                         <td>${relic.imagePath}</td>
                         <td>${relic.createdBy}</td>
