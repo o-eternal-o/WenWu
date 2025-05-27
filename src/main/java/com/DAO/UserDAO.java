@@ -10,6 +10,22 @@ import java.util.List;
 public class UserDAO {
     private DatabaseConnector dbConnector = new DatabaseConnector();
 
+    public User_Bean findUserByUsername(String username) throws Exception {
+        String query = "SELECT * FROM user WHERE username = ?";
+        ResultSet rs = dbConnector.executeQuery(query, username);
+        if (rs.next()) {
+            User_Bean user = new User_Bean();
+            user.setUserId(rs.getInt("user_id"));
+            user.setUsername(rs.getString("username"));
+            user.setPassword(rs.getString("password"));
+            user.setRole(rs.getString("role"));
+            user.setRealNameVerified(rs.getBoolean("real_name_verified"));
+            user.setCreatedAt(rs.getString("created_at"));
+            return user;
+        }
+        return null;
+    }
+
     public List<User_Bean> listUsers() throws Exception {
         List<User_Bean> users = new ArrayList<>();
         String query = "SELECT * FROM user";

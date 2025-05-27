@@ -65,11 +65,9 @@ public class LoginServlet extends HttpServlet {
      */
     private boolean validateUser(String username, String password) {
         try {
-            List<User_Bean> users = userDAO.searchUsers("username", username);
-            for (User_Bean user : users) {
-                if (user.getPassword().equals(password)) {
-                    return true; // 用户名和密码匹配
-                }
+            User_Bean user = userDAO.findUserByUsername(username);
+            if (user != null && user.getPassword().equals(password)) {
+                return true; // 用户名和密码匹配
             }
         } catch (Exception e) {
             e.printStackTrace();
