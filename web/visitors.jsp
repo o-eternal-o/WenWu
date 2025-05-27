@@ -238,28 +238,28 @@
 
         /* 轮播图样式 */
         .palace-carousel {
-            height: 600px;
-            position: relative;
-            overflow: hidden;
-            margin-top: 80px;
+          position: relative;
+          overflow: hidden;
+          width: 100%;
+          height: 500px; /* 设置固定高度 */
         }
 
         .carousel-item {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            transition: opacity 1s;
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          opacity: 0;
+          transition: opacity 1s;
         }
 
         .carousel-item.active {
-            opacity: 1;
+          opacity: 1;
         }
 
         .carousel-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
         }
 
         /* 其他内容样式 */
