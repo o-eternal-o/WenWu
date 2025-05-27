@@ -63,13 +63,7 @@
 
 <script>
     function goBack() {
-        if (document.referrer) {
-            history.back();
-            window.name = "refresh";
-            history.back();
-        } else {
-            window.location = '${pageContext.request.contextPath}/admin/booking_list.jsp';
-        }
+        window.location = '${pageContext.request.contextPath}/BookingServlet?action=list';
     }
 
     document.addEventListener("DOMContentLoaded", function() {

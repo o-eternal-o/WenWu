@@ -6,7 +6,7 @@
 <div class="main-content py-4">
     <h3 class="mb-4 text-center">${empty relic.relicId ? '新增文物' : '编辑文物'}</h3>
 
-    <form id="relicForm" method="post">
+    <form id="relicForm" method="post" enctype="multipart/form-data">
         <input type="hidden" name="action" value="${empty relic.relicId ? 'add' : 'update'}">
         <c:if test="${not empty relic.relicId}">
             <input type="hidden" name="relicId" value="${relic.relicId}">
@@ -33,8 +33,12 @@
 
             <div class="col-md-6">
                 <label class="form-label" for="imagePath">图片路径</label>
-                <input type="text" class="form-control" id="imagePath" name="imagePath"
-                       value="${relic.imagePath}">
+                <c:if test="${not empty relic.imagePath}">
+                    <div class="mb-2">
+                        <img src="${relic.imagePath}" alt="文物图片" class="img-thumbnail" style="max-width: 200px;">
+                    </div>
+                </c:if>
+                <input type="file" class="form-control" id="imagePath" name="imageFile" accept="image/*">
             </div>
 
             <div class="col-md-6">
@@ -46,7 +50,7 @@
             <div class="col-md-6">
                 <label class="form-label" for="createdAt">创建时间</label>
                 <input type="text" class="form-control" id="createdAt" name="createdAt"
-                       value="${relic.createdAt}" placeholder="yyyy-MM-dd HH:mm:ss">
+                       value="${relic.createdAt}" readonly>
             </div>
 
             <div class="col-12">
@@ -66,39 +70,26 @@
 
 <script>
     function goBack() {
-        if (document.referrer) {
-            history.back();
-            window.name = "refresh";
-            history.back();
-        } else {
-            window.location = '${pageContext.request.contextPath}/admin/admin.jsp';
-        }
+        window.location = '${pageContext.request.contextPath}/RelicServlet?action=list'; // 默认链接
     }
 
     document.addEventListener("DOMContentLoaded", function() {
         document.getElementById("relicForm").addEventListener("submit", function(event) {
             event.preventDefault();
 
-            const formElements = this.elements;
-            const formData = {};
-            for (let element of formElements) {
-                if (element.name && !element.disabled) {
-                    formData[element.name] = element.value;
-                }
-            }
-            const relicId = document.querySelector("input[name='relicId']")?.value;
+            const formData = new FormData(this); // 使用 FormData 包含表单数据
+            const relicId = formData.get("relicId");
             const action = relicId ? 'update' : 'add';
             const url = `${pageContext.request.contextPath}/RelicServlet?action=` + action;
 
             const xhr = new XMLHttpRequest();
             xhr.open("POST", url, true);
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
                         if (xhr.responseText === "success") {
                             alert("保存成功！");
-                            window.location = '${pageContext.request.contextPath}/admin/relic_list.jsp';
+                            window.location = `${pageContext.request.contextPath}/admin/relic_list.jsp`;
                         } else {
                             alert("保存失败，请稍后再试！");
                         }
@@ -107,10 +98,7 @@
                     }
                 }
             };
-            const requestBody = Object.keys(formData)
-                .map(key => encodeURIComponent(key) + "=" + encodeURIComponent(formData[key]))
-                .join("&");
-            xhr.send(requestBody);
+            xhr.send(formData); // 直接发送 FormData
         });
     });
 </script>

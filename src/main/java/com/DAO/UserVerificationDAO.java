@@ -51,6 +51,8 @@ public class UserVerificationDAO {
 
     public void updateVerification(UserVerification_Bean bean) throws Exception {
         String query = "UPDATE user_verification SET user_id=?, real_name=?, phone=?, id_number=?, id_image_path=?, status=?, submitted_at=?, reviewed_at=?, reviewed_by=?, reject_reason=? WHERE verification_id=?";
+        System.out.println("Executing SQL: " + query);
+        System.out.println("Parameters: " + bean.getUserId() + ", " + bean.getRealName() + ", " + bean.getPhone() + ", " + bean.getIdNumber() + ", " + bean.getIdImagePath() + ", " + bean.getStatus() + ", " + bean.getSubmittedAt() + ", " + bean.getReviewedAt() + ", " + bean.getReviewedBy() + ", " + bean.getRejectReason() + ", " + bean.getVerificationId());
         dbConnector.executeUpdate(query,
                 bean.getUserId(), bean.getRealName(), bean.getPhone(), bean.getIdNumber(), bean.getIdImagePath(),
                 bean.getStatus(), bean.getSubmittedAt(), bean.getReviewedAt(), bean.getReviewedBy(), bean.getRejectReason(),

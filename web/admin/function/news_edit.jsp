@@ -42,13 +42,7 @@
 
 <script>
     function goBack() {
-        if (document.referrer) {
-            history.back();
-            window.name = "refresh";
-            history.back();
-        } else {
-            window.location = '${pageContext.request.contextPath}/admin/admin.jsp';
-        }
+        window.location = '${pageContext.request.contextPath}/NewsServlet?action=list';
     }
 
     document.addEventListener("DOMContentLoaded", function() {

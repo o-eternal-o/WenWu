@@ -624,7 +624,7 @@
             <div class="user-profile" onclick="toggleUserDropdown()">
                 <span class="user-name">${not empty sessionScope.username ? sessionScope.username : '游客用户'}</span>
                 <div class="user-dropdown">
-                    <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> 退出登录</a>
+                    <a href="index.html" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> 退出登录</a>
                 </div>
             </div>
         </div>
@@ -754,7 +754,7 @@
             <a href="${pageContext.request.contextPath}/visitors/edit_profile.jsp" class="btn">修改信息</a>
         </div>
     </div>
-
+</div>
 
 <script>
     // 菜单切换

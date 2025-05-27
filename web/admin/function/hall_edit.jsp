@@ -88,13 +88,7 @@
 <script>
     // 返回上一页或跳转到默认页面
     function goBack() {
-        if (document.referrer) {
-            history.back(); // 返回上一页
-            window.name = "refresh"; // 设置标记
-            history.back();
-        } else {
-            window.location = '${pageContext.request.contextPath}/admin/admin.jsp'; // 默认链接
-        }
+        window.location = '${pageContext.request.contextPath}/HallServlet?action=list'; // 默认链接
     }
 
     // 表单验证

@@ -321,7 +321,7 @@
     <div class="nav-container">
         <img src="<c:url value="/assets/img/logo.jpg"/>" alt="Logo" class="nav-logo">
         <nav class="nav-links">
-            <a href="#" class="nav-link">首页</a>
+            <a href="${pageContext.request.contextPath}/VisitorsServlet" class="nav-link">首页</a>
             <a href="#" class="nav-link">关于我们</a>
             <a href="#" class="nav-link">帮助中心</a>
         </nav>

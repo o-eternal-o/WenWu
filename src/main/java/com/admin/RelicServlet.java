@@ -4,14 +4,22 @@ import com.DAO.RelicDAO;
 import com.SQL.Relic_Bean;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.UUID;
 
+@MultipartConfig
 @WebServlet("/RelicServlet")
 public class RelicServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -94,13 +102,15 @@ public class RelicServlet extends HttpServlet {
 
     // 添加文物
     private void addRelic(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Part imageFile = request.getPart("imageFile");
+        String imagePath = saveImageToServer(request, imageFile);
+
         String relicName = request.getParameter("relicName");
         String dynasty = request.getParameter("dynasty");
         String description = request.getParameter("description");
         int hallId = Integer.parseInt(request.getParameter("hallId"));
-        String imagePath = request.getParameter("imagePath");
         Integer createdBy = request.getParameter("createdBy") != null ? Integer.parseInt(request.getParameter("createdBy")) : null;
-        String createdAt = request.getParameter("createdAt");
+        String createdAt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 
         Relic_Bean relic = new Relic_Bean();
         relic.setRelicName(relicName);
@@ -123,14 +133,15 @@ public class RelicServlet extends HttpServlet {
 
     // 修改文物
     private void updateRelic(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Part imageFile = request.getPart("imageFile");
+        String imagePath = saveImageToServer(request, imageFile);
+
         int relicId = Integer.parseInt(request.getParameter("relicId"));
         String relicName = request.getParameter("relicName");
         String dynasty = request.getParameter("dynasty");
         String description = request.getParameter("description");
         int hallId = Integer.parseInt(request.getParameter("hallId"));
-        String imagePath = request.getParameter("imagePath");
         Integer createdBy = request.getParameter("createdBy") != null ? Integer.parseInt(request.getParameter("createdBy")) : null;
-        String createdAt = request.getParameter("createdAt");
 
         Relic_Bean relic = new Relic_Bean();
         relic.setRelicId(relicId);
@@ -140,7 +151,6 @@ public class RelicServlet extends HttpServlet {
         relic.setHallId(hallId);
         relic.setImagePath(imagePath);
         relic.setCreatedBy(createdBy);
-        relic.setCreatedAt(createdAt);
 
         relicDAO.updateRelic(relic);
     }
@@ -149,5 +159,27 @@ public class RelicServlet extends HttpServlet {
     private void deleteRelic(HttpServletRequest request, HttpServletResponse response) throws Exception {
         int relicId = Integer.parseInt(request.getParameter("relicId"));
         relicDAO.deleteRelic(relicId);
+    }
+
+    private String saveImageToServer(HttpServletRequest request, Part imageFile) throws IOException {
+        if (imageFile != null && imageFile.getSize() > 0) {
+            // 获取文件名
+            String fileName = UUID.randomUUID().toString() + "_" + Paths.get(imageFile.getSubmittedFileName()).getFileName().toString();
+
+            // 定义存储路径
+            String uploadDir = getServletContext().getRealPath("/uploads");
+            File uploadDirFile = new File(uploadDir);
+            if (!uploadDirFile.exists()) {
+                uploadDirFile.mkdirs(); // 创建目录
+            }
+
+            // 保存文件
+            String filePath = uploadDir + File.separator + fileName;
+            imageFile.write(filePath);
+
+            // 返回文件的 URL
+            return request.getContextPath() + "/uploads/" + fileName;
+        }
+        return null;
     }
 }

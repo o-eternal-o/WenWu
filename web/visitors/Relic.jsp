@@ -10,12 +10,44 @@
                 --gold: #c8a86a;
                 --dark-bg: #2a2a2a;
                 --light-bg: #f8f1e5;
+                --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
+                --shadow-md: 0 4px 16px rgba(0,0,0,0.15);
+                --shadow-lg: 0 8px 24px rgba(0,0,0,0.2);
+                --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             }
             body {
                 background: var(--light-bg);
                 color: #333;
                 font-family: 'Microsoft YaHei', '宋体', sans-serif;
             }
+            .back-to-home {
+                position: absolute;
+                top: 20px;
+                left: 20px;
+                padding: 8px 16px;
+                background: var(--gold);
+                color: white;
+                border-radius: 20px;
+                text-decoration: none;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                transition: var(--transition);
+                box-shadow: var(--shadow-sm);
+                z-index: 10;
+            }
+
+            .back-to-home:hover {
+                background: var(--primary-red);
+                transform: translateY(-2px);
+                box-shadow: var(--shadow-md);
+            }
+
+            .back-to-home i {
+                font-size: 0.9em;
+            }
+
             .main-container {
                 max-width: 1400px;
                 margin: 40px auto;
@@ -167,6 +199,9 @@
         </style>
     </head>
     <body>
+    <a href="${pageContext.request.contextPath}/VisitorsServlet" class="back-to-home">
+        <i class="fas fa-arrow-left"></i> 返回首页
+    </a>
     <div class="main-container">
         <h1 class="page-title">文物浏览</h1>
         <!-- 搜索栏 -->
@@ -184,7 +219,7 @@
             <c:forEach var="relic" items="${relics}">
                 <div class="relic-card">
                     <div class="relic-image">
-                        <img src="${pageContext.request.contextPath}${empty relic.imagePath ? 'assets/img/error.png' :relic.imagePath}" alt="${relic.relicName}">
+                        <img src="${empty relic.imagePath ? '/assets/img/error.png' :relic.imagePath}" alt="${relic.relicName}">
                     </div>
                     <div class="relic-content">
                         <h3 class="relic-name">${relic.relicName}</h3>

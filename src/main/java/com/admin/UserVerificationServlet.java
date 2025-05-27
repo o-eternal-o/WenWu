@@ -4,13 +4,17 @@ import com.DAO.UserVerificationDAO;
 import com.SQL.UserVerification_Bean;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.sql.Timestamp;
-import java.util.Enumeration;
 import java.util.List;
+import java.util.UUID;
 
+@MultipartConfig
 @WebServlet("/UserVerificationServlet")
 public class UserVerificationServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -46,9 +50,15 @@ public class UserVerificationServlet extends HttpServlet {
                     request.getRequestDispatcher("/admin/function/user_verification_edit.jsp").forward(request, response);
                     break;
                 case "update":
-                    update(request, response);
-                    response.setContentType("text/plain;charset=UTF-8");
-                    response.getWriter().write("success");
+                    try {
+                        update(request, response);
+                        response.setContentType("text/plain;charset=UTF-8");
+                        response.getWriter().write("success");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        response.setContentType("text/plain;charset=UTF-8");
+                        response.getWriter().write("error");
+                    }
                     break;
                 case "delete":
                     delete(request, response);
@@ -80,7 +90,14 @@ public class UserVerificationServlet extends HttpServlet {
     }
 
     private void add(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Part idImage = request.getPart("idImage");
+        String idImagePath = saveImageToServer(request, idImage);
+
         UserVerification_Bean bean = buildBean(request);
+        bean.setIdImagePath(idImagePath);
+        bean.setSubmittedAt(new Timestamp(System.currentTimeMillis()));
+        bean.setReviewedAt(new Timestamp(System.currentTimeMillis()));
+
         dao.addVerification(bean);
     }
 
@@ -90,10 +107,31 @@ public class UserVerificationServlet extends HttpServlet {
         request.setAttribute("verification", bean);
     }
 
+
     private void update(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Part idImage = request.getPart("idImage");
+        String idImagePath = saveImageToServer(request, idImage);
         UserVerification_Bean bean = buildBean(request);
-        bean.setVerificationId(Integer.parseInt(request.getParameter("verificationId")));
-        dao.updateVerification(bean);
+        // 从请求中获取 verificationId 并设置到 bean 中
+        String verificationIdParam = request.getParameter("verificationId");
+        if (verificationIdParam != null && !verificationIdParam.isEmpty()) {
+            bean.setVerificationId(Integer.parseInt(verificationIdParam));
+        }
+        if (idImagePath != null) {
+            bean.setIdImagePath(idImagePath);
+        }
+        bean.setReviewedAt(new Timestamp(System.currentTimeMillis()));
+        System.out.println("Verification ID: " + bean.getVerificationId());
+        System.out.println("User ID: " + bean.getUserId());
+        System.out.println("Real Name: " + bean.getRealName());
+        System.out.println("Phone: " + bean.getPhone());
+        System.out.println("ID Number: " + bean.getIdNumber());
+        System.out.println("Status: " + bean.getStatus());
+        try{
+            dao.updateVerification(bean);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void delete(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -117,5 +155,21 @@ public class UserVerificationServlet extends HttpServlet {
         bean.setReviewedBy((reviewedBy == null || reviewedBy.isEmpty()) ? null : Integer.valueOf(reviewedBy));
         bean.setRejectReason(request.getParameter("rejectReason"));
         return bean;
+    }
+
+
+    private String saveImageToServer(HttpServletRequest request, Part imageFile) throws IOException {
+        if (imageFile != null && imageFile.getSize() > 0) {
+            String fileName = UUID.randomUUID().toString() + "_" + Paths.get(imageFile.getSubmittedFileName()).getFileName().toString();
+            String uploadDir = getServletContext().getRealPath("/uploads");
+            File uploadDirFile = new File(uploadDir);
+            if (!uploadDirFile.exists()) {
+                uploadDirFile.mkdirs();
+            }
+            String filePath = uploadDir + File.separator + fileName;
+            imageFile.write(filePath);
+            return request.getContextPath() + "/uploads/" + fileName;
+        }
+        return null;
     }
 }

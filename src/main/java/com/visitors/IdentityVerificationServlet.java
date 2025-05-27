@@ -75,60 +75,58 @@ public class IdentityVerificationServlet extends HttpServlet {
         }
     }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // 从Session中获取用户ID
-        HttpSession session = request.getSession(false);
-        int userId = (int) session.getAttribute("userid");
-        System.out.println("User ID: " + userId); // 打印用户 ID
-        String realName = request.getParameter("realName");
-        String phone = request.getParameter("phone");
-        String idNumber = request.getParameter("idNumber");
-        Part filePart = request.getPart("idImage"); // 获取上传的文件部分
-        String fileName = UUID.randomUUID().toString() + ".jpg"; // 使用UUID生成唯一文件名
-        // 获取文件夹路径
-        File folder = new File(getServletContext().getRealPath("/WEB-INF/IDcard/"));
-        // 判断文件夹是否存在，如果不存在则创建
-        if (!folder.exists()) {
-            folder.mkdirs(); // 创建多级目录
-        }
+   @Override
+   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+       HttpSession session = request.getSession(false);
+       int userId = (int) session.getAttribute("userid");
+       String realName = request.getParameter("realName");
+       String phone = request.getParameter("phone");
+       String idNumber = request.getParameter("idNumber");
+       Part filePart = request.getPart("idImage");
 
-        String filePath = getServletContext().getRealPath("/WEB-INF/IDcard/" + fileName);
+       // 获取文件名
+       String fileName = UUID.randomUUID().toString() + "_" + filePart.getSubmittedFileName();
 
-        // 保存文件到服务器
-        filePart.write(filePath);
+       // 定义存储路径
+       String uploadDir = getServletContext().getRealPath("/uploads");
+       File uploadDirFile = new File(uploadDir);
+       if (!uploadDirFile.exists()) {
+           uploadDirFile.mkdirs(); // 创建目录
+       }
 
-        // 创建UserVerification_Bean对象并设置属性
-        UserVerification_Bean verification = new UserVerification_Bean();
-        verification.setUserId(userId);
-        verification.setRealName(realName);
-        verification.setPhone(phone);
-        verification.setIdNumber(idNumber);
-        verification.setIdImagePath("/WEB-INF/uploads/" + fileName);
-        verification.setStatus("PENDING");
-        verification.setSubmittedAt(new Timestamp(System.currentTimeMillis()));
+       // 保存文件
+       String filePath = uploadDir + File.separator + fileName;
+       filePart.write(filePath);
 
-        try {
-            // 检查用户是否已经提交过认证信息
-            UserVerification_Bean existingVerification = userVerificationDAO.getVerificationByUserId(userId);
+       // 创建UserVerification_Bean对象并设置属性
+       UserVerification_Bean verification = new UserVerification_Bean();
+       verification.setUserId(userId);
+       verification.setRealName(realName);
+       verification.setPhone(phone);
+       verification.setIdNumber(idNumber);
+       verification.setIdImagePath(request.getContextPath() + "/uploads/" + fileName);
+       verification.setStatus("PENDING");
+       verification.setSubmittedAt(new Timestamp(System.currentTimeMillis()));
 
-            if (existingVerification == null) {
-                // 用户尚未提交过认证信息，执行新增操作
-                userVerificationDAO.addVerification(verification);
-            } else {
-                // 用户已有认证信息，执行更新操作
-                int verificationId = existingVerification.getVerificationId();
-                verification.setVerificationId(verificationId);
-                userVerificationDAO.updateVerification(verification);
-            }
+       try {
+           UserVerification_Bean existingVerification = userVerificationDAO.getVerificationByUserId(userId);
 
-            // 跳转到认证步骤第二步页面
-            request.setAttribute("message", "您的实名认证信息已提交成功，请等待审核。");
-            request.getRequestDispatcher("/visitors/Identity_verification.jsp").forward(request, response);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "服务器错误");
-        }
-    }
+           if (existingVerification == null) {
+               userVerificationDAO.addVerification(verification);
+           } else {
+               int verificationId = existingVerification.getVerificationId();
+               verification.setVerificationId(verificationId);
+               userVerificationDAO.updateVerification(verification);
+           }
+
+           int currentStep = 2;
+           request.setAttribute("currentStep", currentStep);
+           request.setAttribute("message", "您的实名认证信息已提交成功，请等待审核。");
+           request.getRequestDispatcher("/visitors/Identity_verification.jsp").forward(request, response);
+       } catch (Exception e) {
+           e.printStackTrace();
+           response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "服务器错误");
+       }
+   }
 
 }

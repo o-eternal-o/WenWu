@@ -32,9 +32,13 @@
                        value="${verification.idNumber}" required>
             </div>
             <div class="col-md-6">
-                <label class="form-label" for="idImagePath">证件图片地址</label>
-                <input type="text" class="form-control" id="idImagePath" name="idImagePath"
-                       value="${verification.idImagePath}">
+                <label class="form-label" for="idImage">证件图片</label>
+                <c:if test="${not empty verification.idImagePath}">
+                    <div class="mb-2">
+                        <img src="${verification.idImagePath}" alt="证件图片" class="img-thumbnail" style="max-width: 200px;">
+                    </div>
+                </c:if>
+                <input type="file" class="form-control" id="idImage" name="idImage" accept="image/*">
             </div>
             <div class="col-md-6">
                 <label class="form-label" for="status">状态</label>
@@ -47,12 +51,12 @@
             <div class="col-md-6">
                 <label class="form-label" for="submittedAt">提交时间</label>
                 <input type="text" class="form-control" id="submittedAt" name="submittedAt"
-                       value="${verification.submittedAt}" placeholder="yyyy-MM-dd HH:mm:ss">
+                       value="${verification.submittedAt}" readonly>
             </div>
             <div class="col-md-6">
                 <label class="form-label" for="reviewedAt">审核时间</label>
                 <input type="text" class="form-control" id="reviewedAt" name="reviewedAt"
-                       value="${verification.reviewedAt}" placeholder="yyyy-MM-dd HH:mm:ss">
+                       value="${verification.reviewedAt}" readonly>
             </div>
             <div class="col-md-6">
                 <label class="form-label" for="reviewedBy">审核人ID</label>
@@ -75,37 +79,41 @@
 
 <script>
     function goBack() {
-        if (document.referrer) {
-            history.back();
-            window.name = "refresh";
-            history.back();
-        } else {
-            window.location = '${pageContext.request.contextPath}/admin/user_verification_list.jsp';
-        }
+        window.location = '${pageContext.request.contextPath}/UserVerificationServlet?action=list';
     }
 
     document.addEventListener("DOMContentLoaded", function() {
-        document.getElementById("verificationForm").addEventListener("submit", function(event) {
+        const verificationForm = document.getElementById("verificationForm");
+
+        // 设置时间字段为只读
+        const submittedAtField = document.getElementById("submittedAt");
+        const reviewedAtField = document.getElementById("reviewedAt");
+
+        if (!submittedAtField.value) {
+            // 新增时设置提交时间为当前时间
+            const now = new Date().toISOString().slice(0, 19).replace("T", " ");
+            submittedAtField.value = now;
+        }
+        // 审核时间始终为当前时间
+        reviewedAtField.value = new Date().toISOString().slice(0, 19).replace("T", " ");
+
+        // 提交表单
+        verificationForm.addEventListener("submit", function(event) {
             event.preventDefault();
-            const formElements = this.elements;
-            const formData = {};
-            for (let element of formElements) {
-                if (element.name && !element.disabled) {
-                    formData[element.name] = element.value;
-                }
-            }
-            const verificationId = document.querySelector("input[name='verificationId']")?.value;
-            const action = verificationId ? 'update' : 'add';
+
+            const formData = new FormData(this); // 使用 FormData 包含表单数据
+            const verificationId = formData.get("verificationId");
+            const action = verificationId ? "update" : "add";
             const url = `${pageContext.request.contextPath}/UserVerificationServlet?action=` + action;
 
             const xhr = new XMLHttpRequest();
             xhr.open("POST", url, true);
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
                         if (xhr.responseText === "success") {
                             alert("保存成功！");
+                            window.location = `${pageContext.request.contextPath}/UserVerificationServlet?action=list`;
                         } else {
                             alert("保存失败，请稍后再试！");
                         }
@@ -114,10 +122,7 @@
                     }
                 }
             };
-            const requestBody = Object.keys(formData)
-                .map(key => encodeURIComponent(key) + "=" + encodeURIComponent(formData[key]))
-                .join("&");
-            xhr.send(requestBody);
+            xhr.send(formData); // 直接发送 FormData
         });
     });
 </script>
