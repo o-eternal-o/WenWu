@@ -111,6 +111,7 @@ public class FeedbackServlet extends HttpServlet {
         int userId = Integer.parseInt(request.getParameter("userId"));
         String relicIdStr = request.getParameter("relicId");
         Integer relicId = (relicIdStr == null || relicIdStr.isEmpty()) ? null : Integer.parseInt(relicIdStr);
+        System.out.println(relicId);
         String content = request.getParameter("content");
         String status = request.getParameter("status");
         String resolvedResult = request.getParameter("resolvedResult");

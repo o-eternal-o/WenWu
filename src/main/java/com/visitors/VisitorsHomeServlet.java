@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@WebServlet("/visitors/home")
+@WebServlet("/visitorsHome")
 public class VisitorsHomeServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Integer userId = (Integer) request.getSession().getAttribute("userid");
@@ -50,7 +50,7 @@ public class VisitorsHomeServlet extends HttpServlet {
             request.setAttribute("feedbackList", userFeedbacks);
             request.setAttribute("verification", verification);
 
-            request.getRequestDispatcher("/visitors/visitors_home.jsp").forward(request, response);
+            request.getRequestDispatcher("/visitors_home.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
             response.sendError(500, "用户信息加载失败");

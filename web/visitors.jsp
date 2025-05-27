@@ -407,7 +407,7 @@
             <div class="user-profile" onclick="toggleUserDropdown()">
                 <span class="user-name">${not empty sessionScope.username ? sessionScope.username : '游客用户'}</span>
                 <div class="user-dropdown">
-                    <a href="${pageContext.request.contextPath}/visitors/home"><i class="fas fa-user"></i> 个人中心</a>
+                    <a href="${pageContext.request.contextPath}/visitorsHome"><i class="fas fa-user"></i> 个人中心</a>
                     <a href="${pageContext.request.contextPath}/index.html" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> 退出登录</a>
                 </div>
             </div>

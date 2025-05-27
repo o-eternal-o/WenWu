@@ -615,7 +615,7 @@
                 <i class="fas fa-bars"></i>
             </button>
             <div class="nav-links">
-                <a href="../visitors.jsp" class="nav-link">首页</a>
+                <a href="<c:url value="/visitors.jsp"/>" class="nav-link">首页</a>
             </div>
         </div>
 
@@ -624,7 +624,7 @@
             <div class="user-profile" onclick="toggleUserDropdown()">
                 <span class="user-name">${not empty sessionScope.username ? sessionScope.username : '游客用户'}</span>
                 <div class="user-dropdown">
-                    <a href="index.html" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> 退出登录</a>
+                    <a href="<c:url value="/index.html"/>" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> 退出登录</a>
                 </div>
             </div>
         </div>
@@ -670,9 +670,9 @@
                            <div class="booking-time">${b.bookingTime}</div>
                            <div class="booking-status
                                <c:choose>
-                                   <c:when test="${b.status eq '已确认'}"> status-confirmed</c:when>
-                                   <c:when test="${b.status eq '待确认'}"> status-pending</c:when>
-                                   <c:when test="${b.status eq '已取消'}"> status-canceled</c:when>
+                                   <c:when test="${b.status eq 'pending'}"> 处理中</c:when>
+                                   <c:when test="${b.status eq 'confirmed'}"> 预约成功</c:when>
+                                   <c:when test="${b.status eq 'canceled'}"> 预约失败</c:when>
                                </c:choose>
                            ">${b.status}</div>
                        </div>
@@ -692,7 +692,6 @@
     <div id="feedback-section" class="content-section">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h2 class="section-title">我的反馈</h2>
-            <a href="#" class="btn">提交反馈</a>
         </div>
         <div class="feedback-list">
             <c:choose>
@@ -703,8 +702,8 @@
                                 <strong>反馈ID: ${f.feedbackId}</strong>
                                 <span style="color: var(--gold);">
                                     <c:choose>
-                                        <c:when test="${f.status eq '处理中'}">处理中</c:when>
-                                        <c:when test="${f.status eq '已解决'}">已解决</c:when>
+                                        <c:when test="${f.status eq 'processing'}">处理中</c:when>
+                                        <c:when test="${f.status eq 'resolved'}">已解决</c:when>
                                         <c:otherwise>未处理</c:otherwise>
                                     </c:choose>
                                 </span>
@@ -720,7 +719,6 @@
                 <c:otherwise>
                     <div class="empty-tip">
                         <p>您还没有提交过任何反馈</p>
-                        <a href="#" class="btn btn-outline">提交反馈</a>
                     </div>
                 </c:otherwise>
             </c:choose>

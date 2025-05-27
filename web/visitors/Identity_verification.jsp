@@ -446,19 +446,24 @@
         fetch(form.action, {
             method: 'POST',
             body: formData
-        }).then(res => res.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    msg.textContent = data.message;
-                    msg.className = 'msg success';
-                    form.reset();
-                    document.getElementById('preview').style.display = 'none'; // 清除预览图片
-                } else {
-                    msg.textContent = data.message;
-                    msg.className = 'msg error';
-                }
-            }).catch(() => {
-            msg.textContent = '提交失败，请稍后重试';
+        }).then(res => {
+            if (!res.ok) {
+                throw new Error(`HTTP 错误：${res.status}`);
+            }
+            return res.json();
+        }).then(data => {
+            if (data.status === 'success') {
+                msg.textContent = data.message;
+                msg.className = 'msg success';
+                form.reset();
+                document.getElementById('preview').style.display = 'none'; // 清除预览图片
+            } else {
+                msg.textContent = data.message;
+                msg.className = 'msg error';
+            }
+        }).catch(error => {
+            console.error('提交失败:', error);
+            msg.textContent = '提交失败，请稍后重试。';
             msg.className = 'msg error';
         });
     };
@@ -480,9 +485,6 @@
         }, duration);
     }
 
-    // 示例：调用函数显示消息
-    showMessage('操作成功！', 'success'); // 成功消息
-    showMessage('发生错误，请重试。', 'error'); // 错误消息
 </script>
 </body>
 </html>
