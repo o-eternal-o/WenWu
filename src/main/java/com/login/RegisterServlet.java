@@ -16,7 +16,7 @@ import java.sql.SQLException;
 @WebServlet("/RegisterServlet")
 public class RegisterServlet extends HttpServlet {
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // 设置请求编码为UTF-8，防止中文乱码
         request.setCharacterEncoding("UTF-8");
 

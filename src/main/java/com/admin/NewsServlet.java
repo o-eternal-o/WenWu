@@ -15,27 +15,21 @@ import java.util.List;
 @WebServlet("/NewsServlet")
 public class NewsServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private NewsDAO newsDAO = new NewsDAO();
+    public NewsDAO newsDAO = new NewsDAO();
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doPost(request, response);
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
 
         String action = request.getParameter("action");
-        if (action == null) {
-            System.out.println("action is null");
-        } else {
-            System.out.println("All parameters:");
-            Enumeration<String> parameterNames = request.getParameterNames();
-            while (parameterNames.hasMoreElements()) {
-                String paramName = parameterNames.nextElement();
-                System.out.println(paramName + ": " + request.getParameter(paramName));
-            }
+        if (action == null || action.isEmpty()) {
+            response.getWriter().write("Invalid action");
+            return;
         }
         try {
             switch (action) {
@@ -54,6 +48,7 @@ public class NewsServlet extends HttpServlet {
                     break;
                 case "edit":
                     editNews(request, response);
+                    response.setContentType("text/plain;charset=UTF-8");
                     request.getRequestDispatcher("/admin/function/news_edit.jsp").forward(request, response);
                     break;
                 case "update":

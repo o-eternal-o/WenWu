@@ -15,69 +15,64 @@ import java.util.List;
 @WebServlet("/HallServlet")
 public class HallServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private HallDAO hallDAO = new HallDAO();
+    public HallDAO hallDAO = new HallDAO();
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doPost(request ,response);
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // 设置请求和响应的字符编码
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html;charset=UTF-8");
+   public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+       request.setCharacterEncoding("UTF-8");
+       response.setCharacterEncoding("UTF-8");
+       response.setContentType("text/html;charset=UTF-8");
 
-        String action = request.getParameter("action");
-        if (action == null) {
-            System.out.println("action is null");
-        }else {
-            System.out.println("All parameters:");
-            Enumeration<String> parameterNames = request.getParameterNames();
-            while (parameterNames.hasMoreElements()) {
-                String paramName = parameterNames.nextElement();
-                System.out.println(paramName + ": " + request.getParameter(paramName));
-            }
-        }
-        try {
-            switch (action) {
-                case "list":
-                    listHalls(request, response);
-                    break;
-                case "search":
-                    searchHalls(request, response);
-                    response.setContentType("text/plain;charset=UTF-8");
-                    response.getWriter().write("success");// 搜索成功
-                    break;
-                case "add":
-                    addHall(request, response);
-                    response.setContentType("text/plain;charset=UTF-8");
-                    response.getWriter().write("success");// 添加成功
-                    break;
-                case "edit":
-                    editHall(request, response);
-                    request.getRequestDispatcher("/admin/function/hall_edit.jsp").forward(request, response);
-                    break;
-                case "update":
-                    updateHall(request, response);
-                    response.setContentType("text/plain;charset=UTF-8");
-                    response.getWriter().write("success"); // 修改成功
-                    break;
-                case "delete":
-                    deleteHall(request, response);
-                    response.setContentType("text/plain;charset=UTF-8");
-                    response.getWriter().write("success"); // 删除成功
-                    break;
-                default:
-                    response.setContentType("text/plain;charset=UTF-8");
-                    response.getWriter().write("defeat"); // 操作失败
-                    break;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+       String action = request.getParameter("action");
+       if (action == null || action.isEmpty()) {
+           response.getWriter().write("Invalid action");
+           return;
+       }
 
-    /**
+       try {
+           switch (action) {
+               case "list":
+                   listHalls(request, response);
+                   break;
+               case "search":
+                   searchHalls(request, response);
+                   response.setContentType("text/plain;charset=UTF-8");
+                   response.getWriter().write("success");
+                   break;
+               case "add":
+                   addHall(request, response);
+                   response.setContentType("text/plain;charset=UTF-8");
+                   response.getWriter().write("success");
+                   break;
+               case "edit":
+                   editHall(request, response);
+                   response.setContentType("text/plain;charset=UTF-8");
+                   request.getRequestDispatcher("/admin/function/hall_edit.jsp").forward(request, response);
+                   break;
+               case "update":
+                   updateHall(request, response);
+                   response.setContentType("text/plain;charset=UTF-8"); // 设置为 text/plain
+                   response.getWriter().write("success");
+                   break;
+               case "delete":
+                   deleteHall(request, response);
+                   response.setContentType("text/plain;charset=UTF-8");
+                   response.getWriter().write("success");
+                   break;
+               default:
+                   response.setContentType("text/plain;charset=UTF-8");
+                   response.getWriter().write("defeat");
+                   break;
+           }
+       } catch (Exception e) {
+           e.printStackTrace();
+       }
+   }
+
+   /**
      * 查询所有展厅信息并存储
      */
     private void listHalls(HttpServletRequest request, HttpServletResponse response) throws Exception {

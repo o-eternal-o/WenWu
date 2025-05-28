@@ -17,7 +17,15 @@ public class LoginServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private UserDAO userDAO = new UserDAO();
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public LoginServlet() {
+        this.userDAO = new UserDAO(); // 默认构造函数
+    }
+    // 测试时使用的构造函数
+    public LoginServlet(UserDAO userDAO) {
+        this.userDAO = userDAO;
+    }
+
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // 获取表单数据
         request.setCharacterEncoding("UTF-8");
         String username = request.getParameter("username");
@@ -57,12 +65,6 @@ public class LoginServlet extends HttpServlet {
         }
     }
 
-    /**
-     * 验证用户凭据
-     * @param username 用户名
-     * @param password 密码
-     * @return 如果用户有效则返回 true，否则返回 false
-     */
     private boolean validateUser(String username, String password) {
         try {
             User_Bean user = userDAO.findUserByUsername(username);
@@ -75,11 +77,6 @@ public class LoginServlet extends HttpServlet {
         return false; // 验证失败
     }
 
-    /**
-     * 查询用户信息
-     * @param username 用户名
-     * @return 包含用户 ID 和角色的 User_Bean 对象
-     */
     private User_Bean getUserInfo(String username) {
         try {
             List<User_Bean> users = userDAO.searchUsers("username", username);

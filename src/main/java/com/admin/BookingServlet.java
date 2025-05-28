@@ -7,19 +7,18 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
-import java.util.Enumeration;
 import java.util.List;
 
 @WebServlet("/BookingServlet")
 public class BookingServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private BookingDAO bookingDAO = new BookingDAO();
+    public BookingDAO bookingDAO = new BookingDAO();
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doPost(request, response);
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");

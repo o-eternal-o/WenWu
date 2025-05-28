@@ -18,18 +18,22 @@ import java.util.UUID;
 @WebServlet("/UserVerificationServlet")
 public class UserVerificationServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private UserVerificationDAO dao = new UserVerificationDAO();
+    public UserVerificationDAO dao = new UserVerificationDAO();
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doPost(request, response);
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
 
         String action = request.getParameter("action");
+        if (action == null || action.isEmpty()) {
+            response.getWriter().write("Invalid action");
+            return;
+        }
         try {
             switch (action) {
                 case "list":
