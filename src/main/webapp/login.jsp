@@ -51,7 +51,7 @@
 <!-- 故宫风格导航栏 -->
 <nav class="palace-nav">
   <div class="nav-container">
-    <img src="assets/img/logo.jpg" alt="数字文物展厅" class="nav-logo">
+    <img src="imgs/img/logo.jpg" alt="数字文物展厅" class="nav-logo">
     <div class="nav-links">
       <a href="index.html" class="nav-link">首页</a>
       <a href="#" class="nav-link">参观导览</a>

@@ -11,6 +11,6 @@
     <title>ERROR</title>
 </head>
 <body>
-    <img src="assets/img/error.png" alt="Error Image" style="width: 80%; height: auto;">
+    <img src="imgs/img/error.png" alt="Error Image" style="width: 80%; height: auto;">
 </body>
 </html>

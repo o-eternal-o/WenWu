@@ -305,7 +305,7 @@
 <body>
 <!-- 故宫风格导航栏 -->
 <nav class="palace-nav">
-    <img src="<c:url value="/assets/img/logo.jpg"/>" alt="数字文物展厅" class="nav-logo">
+    <img src="/assets/img/logo.jpg" alt="数字文物展厅" class="nav-logo">
     <div class="nav-links">
         <a href="${pageContext.request.contextPath}/visitors.jsp" class="nav-link">首页</a>
         <a href="#" class="nav-link">参观导览</a>
@@ -356,7 +356,7 @@
                         </div>
                     </div>
                     <p class="hall-description">${hall.layoutRules}</p>
-                    <a href="<c:url value='/visitors/OneHall'/>?hallId=${hall.hallId}" class="view-button">查看详情</a>
+                    <a href="/visitors/OneHall?hallId=${hall.hallId}" class="view-button">查看详情</a>
                 </div>
             </div>
         </c:forEach>

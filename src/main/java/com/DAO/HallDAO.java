@@ -20,7 +20,7 @@ public class HallDAO {
         ResultSet rs = dbConnector.executeQuery(query);
         while (rs.next()) {
             Hall_Bean hall = new Hall_Bean();
-            hall.setHallId(rs.getInt("hall_id"));  // 修改为 "hall_id"
+            hall.setHallId(rs.getInt("hall_id"));
             hall.setHallName(rs.getString("hall_name"));
             hall.setDynasty(rs.getString("dynasty"));
             hall.setType(rs.getString("type"));

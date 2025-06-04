@@ -418,10 +418,10 @@
 <!-- 轮播图 -->
 <div class="palace-carousel">
     <div class="carousel-item active">
-        <img src="assets/img/s5e9926e6ea567.jpg" alt="太和殿全景">
+        <img src="imgs/img/s5e9926e6ea567.jpg" alt="太和殿全景">
     </div>
     <div class="carousel-item">
-        <img src="assets/img/VCG211345429946.jpg" alt="文物精品">
+        <img src="imgs/img/VCG211345429946.jpg" alt="文物精品">
     </div>
 </div>
 
@@ -436,7 +436,7 @@
 <div class="relic-grid">
     <div class="relic-card">
         <div class="relic-image">
-            <img src="assets/img/s591529137db2e.jpg" alt="清明上河图">
+            <img src="imgs/img/s591529137db2e.jpg" alt="清明上河图">
         </div>
         <div class="relic-info">
             <h3>清明上河图</h3>
@@ -445,7 +445,7 @@
     </div>
     <div class="relic-card">
         <div class="relic-image">
-            <img src="assets/img/qinghua.jpg" alt="青花瓷">
+            <img src="imgs/img/qinghua.jpg" alt="青花瓷">
         </div>
         <div class="relic-info">
             <h3>青花缠枝莲纹瓶</h3>

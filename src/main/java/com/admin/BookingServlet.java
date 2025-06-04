@@ -24,6 +24,10 @@ public class BookingServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
 
         String action = request.getParameter("action");
+        if (action == null || action.isEmpty()) {
+            response.getWriter().write("Invalid action");
+            return;
+        }
         try {
             switch (action) {
                 case "list":

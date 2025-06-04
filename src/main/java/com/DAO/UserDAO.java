@@ -62,7 +62,7 @@ public class UserDAO {
     }
 
     public void addUser(User_Bean user) throws Exception {
-        String query = "INSERT INTO user (username, password, role, real_name_verified, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO user (username, password, role, real_name_verified, created_at) VALUES (?, ?, ?, ?, ?)";
         dbConnector.executeUpdate(query,
                 user.getUsername(),
                 user.getPassword(),

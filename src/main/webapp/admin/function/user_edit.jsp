@@ -38,7 +38,7 @@
             <div class="col-md-6">
                 <label class="form-label" for="createdAt">创建时间</label>
                 <input type="text" class="form-control" id="createdAt" name="createdAt"
-                       value="${user.createdAt}" placeholder="yyyy-MM-dd HH:mm:ss">
+                       value="${user.createdAt}" readonly>
             </div>
         </div>
         <div class="mt-4 d-flex justify-content-between">

@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Enumeration;
+import java.util.Collections;
 import java.util.List;
 
 @WebServlet("/FeedbackServlet")
@@ -27,6 +27,10 @@ public class FeedbackServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
 
         String action = request.getParameter("action");
+        if (action == null || action.isEmpty()) {
+            response.getWriter().write("Invalid action");
+            return;
+        }
         try {
             switch (action) {
                 case "list":
@@ -63,6 +67,8 @@ public class FeedbackServlet extends HttpServlet {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            response.setContentType("text/plain;charset=UTF-8");
+            response.getWriter().write("Error: " + e.getMessage());
         }
     }
 
@@ -75,11 +81,21 @@ public class FeedbackServlet extends HttpServlet {
     private void searchFeedbacks(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String searchType = request.getParameter("searchType");
         String searchInput = request.getParameter("searchInput");
+
+        // 验证参数是否为空
+        if (searchType == null || searchType.isEmpty() || searchInput == null || searchInput.isEmpty()) {
+            response.setContentType("text/plain;charset=UTF-8");
+            response.getWriter().write("Invalid search parameters");
+            return;
+        }
+
         List<Feedback_Bean> list = feedbackDAO.searchFeedbacks(searchType, searchInput);
+        if (list == null) {
+            list = Collections.emptyList(); // 避免 NullPointerException
+        }
         request.setAttribute("feedbackList", list);
         request.getRequestDispatcher("/admin/feedback_list.jsp").forward(request, response);
     }
-
     private void addFeedback(HttpServletRequest request, HttpServletResponse response) throws Exception {
         int userId = Integer.parseInt(request.getParameter("userId"));
         String relicIdStr = request.getParameter("relicId");
@@ -103,6 +119,11 @@ public class FeedbackServlet extends HttpServlet {
     private void editFeedback(HttpServletRequest request, HttpServletResponse response) throws Exception {
         int feedbackId = Integer.parseInt(request.getParameter("feedbackId"));
         Feedback_Bean fb = feedbackDAO.getFeedbackById(feedbackId);
+        if (fb == null) {
+            response.setContentType("text/plain;charset=UTF-8");
+            response.getWriter().write("Feedback not found");
+            return;
+        }
         request.setAttribute("feedback", fb);
     }
 

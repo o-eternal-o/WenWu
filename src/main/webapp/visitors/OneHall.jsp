@@ -173,7 +173,7 @@
 </head>
 <body>
 <nav class="palace-nav">
-    <img src="<c:url value='/assets/img/logo.jpg'/>" alt="数字文物展厅" class="nav-logo">
+    <img src="${pageContext.request.contextPath}/assets/img/logo.jpg" alt="数字文物展厅" class="nav-logo">
     <div class="nav-links">
         <a href="${pageContext.request.contextPath}/visitors.jsp" class="nav-link">首页</a>
     </div>

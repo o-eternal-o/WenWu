@@ -24,7 +24,7 @@ public class OneHallServlet extends HttpServlet {
             Hall_Bean hall = hallDAO.getHallById(hallId);
             request.setAttribute("relics", relics);
             request.setAttribute("hall", hall);
-            request.getRequestDispatcher("/visitors/OneHall").forward(request, response);
+            request.getRequestDispatcher("/visitors/OneHall.jsp").forward(request, response);
         } catch (Exception e) {
             throw new ServletException(e);
         }

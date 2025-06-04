@@ -9,7 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Enumeration;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @WebServlet("/UserServlet")
@@ -48,6 +49,7 @@ public class UserServlet extends HttpServlet {
                     break;
                 case "edit":
                     editUser(request, response);
+                    response.setContentType("text/plain;charset=UTF-8");
                     request.getRequestDispatcher("/admin/function/user_edit.jsp").forward(request, response);
                     break;
                 case "update":
@@ -87,11 +89,9 @@ public class UserServlet extends HttpServlet {
     private void addUser(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-        String phone = request.getParameter("phone");
         String role = request.getParameter("role");
-        String realName = request.getParameter("realName");
         boolean realNameVerified = "1".equals(request.getParameter("realNameVerified"));
-        String createdAt = request.getParameter("createdAt");
+        String createdAt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 
         User_Bean user = new User_Bean();
         user.setUsername(username);
@@ -113,9 +113,7 @@ public class UserServlet extends HttpServlet {
         int userId = Integer.parseInt(request.getParameter("userId"));
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-        String phone = request.getParameter("phone");
         String role = request.getParameter("role");
-        String realName = request.getParameter("realName");
         boolean realNameVerified = "1".equals(request.getParameter("realNameVerified"));
         String createdAt = request.getParameter("createdAt");
 
